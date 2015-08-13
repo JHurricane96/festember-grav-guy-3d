@@ -1,17 +1,12 @@
 function Player () {
 	this.size = config.playerSize;
-	var cubeGeo = new THREE.CubeGeometry(this.size, this.size, this.size);
+	var cubeGeo = new THREE.BoxGeometry(this.size, this.size, this.size);
 	var material = new THREE.MeshPhongMaterial({"color": 0x404040, "transparent": true});
 	material.opacity = 0.5;
 	this.pl = new THREE.Mesh(cubeGeo, material);
 	this.pl.position.set(0, 0, -120);
-	this.pl.castShadow = true;
-	//this.pl.rotation.x = Math.PI / 10;
-	//this.box = undefined;
 	this.box = new THREE.BoxHelper(this.pl);
-	this.box.material = new THREE.MeshBasicMaterial({"color": 0x808080});
-	//this.pl.rotation.x = Math.PI / 6;
-	//this.pl.rotation.y = Math.PI / 6;
+	this.box.material = new THREE.MeshBasicMaterial({"color": 0x505050});
 	this.velocity = new THREE.Vector3(0, 0, 0);
 }
 

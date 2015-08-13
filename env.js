@@ -1,44 +1,10 @@
-/*var roofCeilingGeo = new THREE.PlaneGeometry(config.roomWidth, config.roomDepth);
-var wallsGeo = new THREE.PlaneGeometry(config.roomHeight, config.roomDepth);
-var texture = THREE.ImageUtils.loadTexture("tile.jpg");
-texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(2, 1);
-var material = new THREE.MeshPhongMaterial({map: texture});
-//var material = new THREE.MeshBasicMaterial({"wireframe": true});
-var floor = new THREE.Mesh(roofCeilingGeo, material);
-floor.position.set(0, -config.roomHeight / 2, -config.roomDepth / 2);
-floor.rotation.x = -Math.PI / 2;
-floor.receiveShadow = true;
-var roof = new THREE.Mesh(roofCeilingGeo, material);
-roof.rotation.x = Math.PI / 2;
-roof.position.set(0, config.roomHeight / 2, -config.roomDepth / 2);
-roof.castShadow = true;
-var leftWall = new THREE.Mesh(wallsGeo, material);
-leftWall.rotation.y = Math.PI / 2;
-leftWall.rotation.z = Math.PI / 2;
-leftWall.position.set(-config.roomWidth / 2, 0, -config.roomDepth / 2);
-leftWall.receiveShadow = true;
-var rightWall = new THREE.Mesh(wallsGeo, material);
-rightWall.rotation.y = -Math.PI / 2;
-rightWall.rotation.z = Math.PI / 2;
-rightWall.position.set(config.roomWidth / 2, 0, -config.roomDepth / 2);*/
-
-/*var env = {
-	"roof": roof,
-	"floor": floor,
-	"leftWall": leftWall,
-	"rightWall": rightWall
-};*/
-
-envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
-
+var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
 
 //The worst code ever written
 function Environment () {
-	var roofCeilingGeo = new THREE.PlaneGeometry(config.roomWidth, config.roomDepth);
-	var wallsGeo = new THREE.PlaneGeometry(config.roomHeight, config.roomDepth);
-	var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
+	var roofCeilingGeo = new THREE.PlaneBufferGeometry(config.roomWidth, config.roomDepth);
+	var wallsGeo = new THREE.PlaneBufferGeometry(config.roomHeight, config.roomDepth);
+	//var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
 	envTexture.wrapS = THREE.RepeatWrapping;
 	envTexture.wrapT = THREE.RepeatWrapping;
 	envTexture.repeat.set(2, 0.1);
@@ -84,7 +50,7 @@ Environment.prototype.wrapWalls = function (curWallSet) {
 
 function makeBackWall () {
 	var material = new THREE.MeshPhongMaterial({"color": 0x000000});
-	var geometry = new THREE.PlaneGeometry(config.roomWidth, config.roomHeight);
+	var geometry = new THREE.PlaneBufferGeometry(config.roomWidth, config.roomHeight);
 	var backWall = new THREE.Mesh(geometry, material);
 	backWall.position.set(0, 0, -config.los);
 	return backWall;
