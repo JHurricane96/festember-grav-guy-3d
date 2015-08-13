@@ -7,6 +7,7 @@ Current Features:
 -----------------
 * Gravity control with arrow keys.
 * Collision with walls, roof and floor.
+* Walls warp (Infinitely long walls).
 (That's about it for now)
 
 Build instructions:
