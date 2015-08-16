@@ -18,5 +18,8 @@ var config = {
 		}
 	},*/
 	"enemyGenDist": 4000,
-	"speedUpAfter": 15000	// 15 seconds
+	"speedUpAfter": 15000,	// 15 seconds
+	"fuelConsumeRate": {
+		"timeSlow": 0.3
+	}
 };

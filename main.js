@@ -21,6 +21,24 @@ function Game () {
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
 	this.elapsedTime = 0;
+	this.powers = {
+		active: {
+			"timeSlow": false
+		},
+		fuel: {
+			"timeSlow": 100
+		},
+		elt: {
+			"timeSlow": document.querySelector("#time-icon"),
+			"timeSlowFuel": document.querySelector("#time-icon .fuel-indicator")
+		}
+	}
+/*	this.fuel = {
+		"timeSlow": 100
+	};
+	this.activePowers = {
+		"timeSlow": false
+	};*/
 /*	this.light = new THREE.SpotLight( 0xFFFFFF, 1, 5000, Math.PI / 2);
 	this.light.position.set( 0, 0, 0 );
 
@@ -76,6 +94,11 @@ Game.prototype.update = function (timeDiff) {
 	var enemy;
 	var toDelete = [];
 	var t = timeDiff / this.timeFactor;
+	if (this.powers.active.timeSlow) {
+		t /= 10;
+		this.powers.fuel.timeSlow -= config.fuelConsumeRate.timeSlow;
+		this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
+	}
 	if(this.elapsedTime > config.speedUpAfter) {
 		this.timeFactor--;
 		this.elapsedTime = 0;
@@ -174,7 +197,14 @@ Game.prototype.update = function (timeDiff) {
 }
 
 Game.prototype.onKeyDown = function (event) {
-	if (event.keyCode == 37) {
+	console.log(this.powers);
+	if (event.keyCode == 83) {
+		if (this.powers.fuel.timeSlow > 0)
+			this.powers.active.timeSlow = true;
+		else
+			this.powers.active.timeSlow = false;
+	}
+	else if (event.keyCode == 37) {
 		event.preventDefault();
 		this.gravity.x = -config.accelMag;
 		this.gravChange = true;
@@ -196,6 +226,12 @@ Game.prototype.onKeyDown = function (event) {
 	}
 }
 
+Game.prototype.onKeyUp = function (event) {
+	if (event.keyCode == 83) {
+		this.powers.active.timeSlow = false;
+	}
+}
+
 Game.prototype.windowResize = function () {
 	this.camera.aspect = window.innerWidth / window.innerHeight;
 	this.camera.updateProjectionMatrix();
@@ -204,6 +240,7 @@ Game.prototype.windowResize = function () {
 
 Game.prototype.startEvents = function () {
 	window.addEventListener("keydown", this.onKeyDown.bind(this));
+	window.addEventListener("keyup", this.onKeyUp.bind(this));
 	window.addEventListener("resize", this.windowResize.bind(this));
 }
 
