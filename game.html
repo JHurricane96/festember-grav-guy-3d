@@ -25,20 +25,27 @@
 				height: 70px;
 				margin-left: 20px;
 				text-align: center;
-			}
-			.status-icon img {
-				height: 80%;
 				-webkit-filter	: opacity(0.2);
 				-moz-filter	: opacity(0.2);
 				-ms-filter	: opacity(0.2);
 				-o-filter 	: opacity(0.2);
-				filter		: opacity(0.2);  
+				filter		: opacity(0.2);
+			}
+			.status-icon.active {
+				-webkit-filter	: opacity(1);
+				-moz-filter	: opacity(1);
+				-ms-filter	: opacity(1);
+				-o-filter 	: opacity(1);
+				filter		: opacity(1);
+			}
+			.status-icon img {
+				height: 80%;
 			}
 			.fuel-indicator {
 				position: absolute;
 				width: 100%;
 				height: 10%;
-				background-color: rgba(0, 0, 0, 0.2);
+				background-color: black;
 			}
 			#time-icon {
 				margin-top: 10px;

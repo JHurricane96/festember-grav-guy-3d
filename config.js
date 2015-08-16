@@ -1,7 +1,7 @@
 var config = {
 	"roomHeight": 2000,
 	"roomWidth": 4096,
-	"zVelInit": 80,
+	"zVel": 80,
 	"zVelDelta": 150,
 	"accelMag": 6,
 	"playerSize": 50,
@@ -21,5 +21,6 @@ var config = {
 	"speedUpAfter": 15000,	// 15 seconds
 	"fuelConsumeRate": {
 		"timeSlow": 0.3
-	}
+	},
+	"timeSlowFactor": 10
 };

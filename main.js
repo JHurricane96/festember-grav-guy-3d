@@ -21,8 +21,11 @@ function Game () {
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
 	this.elapsedTime = 0;
+/*	this.keyMap = {
+		"timeSlow": false
+	}*/
 	this.powers = {
-		active: {
+		keyPressed: {
 			"timeSlow": false
 		},
 		fuel: {
@@ -65,7 +68,7 @@ function Game () {
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
 	this.lost = false;
-	this.zVel = config.zVelInit;
+	this.zVel = config.zVel;
 	this.timeFactor = 15;
 }
 
@@ -94,10 +97,15 @@ Game.prototype.update = function (timeDiff) {
 	var enemy;
 	var toDelete = [];
 	var t = timeDiff / this.timeFactor;
-	if (this.powers.active.timeSlow) {
-		t /= 10;
-		this.powers.fuel.timeSlow -= config.fuelConsumeRate.timeSlow;
-		this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
+	//console.log(this.powers.fuel.timeSlow);
+	if (this.powers.keyPressed.timeSlow) {
+		if (!/active/.test(this.powers.elt.timeSlow.className))
+			this.powers.elt.timeSlow.className += " active";
+		if (this.powers.fuel.timeSlow > 0.0) {
+			t /= config.timeSlowFactor;
+			this.powers.fuel.timeSlow -= config.fuelConsumeRate.timeSlow;
+			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
+		}
 	}
 	if(this.elapsedTime > config.speedUpAfter) {
 		this.timeFactor--;
@@ -113,43 +121,7 @@ Game.prototype.update = function (timeDiff) {
 	}
 	if (this.enemyGenDist <= 0) {
 		var enemyType = Math.random() * 4;
-		var enemyX = 0, enemyY = 0;
-		var enemySize = {
-			"z": 200
-		}
-		if (enemyType < 1) {
-			enemySize.x = config.roomWidth / 2;
-			enemySize.y = config.roomHeight;
-			enemyX = -config.roomWidth / 2 + enemySize.x / 2;
-		}
-		else if (enemyType < 2) {
-			enemySize.x = config.roomWidth / 2;
-			enemySize.y = config.roomHeight;
-			enemyX = config.roomWidth / 2 - enemySize.x / 2;
-		}
-		else if (enemyType < 3) {
-			enemySize.x = config.roomWidth;
-			enemySize.y = config.roomHeight / 2;
-			enemyY = config.roomHeight / 2 - enemySize.y / 2;
-		}
-		else {
-			enemySize.x = config.roomWidth;
-			enemySize.y = config.roomHeight / 2;
-			enemyY = -config.roomHeight / 2 + enemySize.y / 2;
-		}
-		enemy = new Enemy(
-			new THREE.Vector3(
-				enemyX,
-				enemyY,
-				-config.los - enemySize.z / 2
-			),
-			{
-				"x": enemySize.x,
-				"y": enemySize.y,
-				"z": enemySize.z
-			},
-			this.zVel
-		);
+		enemy = generateEnemy(enemyType);
 		this.enemies.push(enemy);
 		this.enemyGenDist = config.enemyGenDist;
 		this.scene.add(enemy.en);
@@ -158,18 +130,28 @@ Game.prototype.update = function (timeDiff) {
 		if (this.env.hasOwnProperty(wall))
 			this.env[wall].position.z += this.zVel * t;
 	}
-	tempVector.copy(this.gravity);
-	tempVector.multiplyScalar(t);
-	this.player.velocity.add(tempVector);
-	tempVector.copy(this.player.velocity);
-	tempVector.multiplyScalar(t);
-	this.player.pl.position.add(tempVector);
+	if (this.powers.keyPressed.timeSlow && this.powers.fuel.timeSlow > 0) {
+		tempVector.copy(this.gravity);
+		tempVector.multiplyScalar(t * config.timeSlowFactor/2);
+		this.player.velocity.add(tempVector);
+		tempVector.copy(this.player.velocity);
+		tempVector.multiplyScalar(t * config.timeSlowFactor/2);
+		this.player.pl.position.add(tempVector);
+	}
+	else {
+		tempVector.copy(this.gravity);
+		tempVector.multiplyScalar(t);
+		this.player.velocity.add(tempVector);
+		tempVector.copy(this.player.velocity);
+		tempVector.multiplyScalar(t);
+		this.player.pl.position.add(tempVector);
+	}
 	this.player.checkCollide(this.gravity, this.gravChange);
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
 	this.camera.position.y += 50;
-	if (this.camera.position.y + this.player.size + 40 > config.roomHeight / 2)
-		this.camera.position.y = config.roomHeight / 2 - this.player.size - 40;
+	if (this.camera.position.y + this.player.size + 50 > config.roomHeight / 2)
+		this.camera.position.y = config.roomHeight / 2 - this.player.size - 50;
 	this.light.position.copy(this.player.pl.position);
 	this.light.position.z += config.lightPos;
 	this.light.z = 0;
@@ -197,12 +179,8 @@ Game.prototype.update = function (timeDiff) {
 }
 
 Game.prototype.onKeyDown = function (event) {
-	console.log(this.powers);
 	if (event.keyCode == 83) {
-		if (this.powers.fuel.timeSlow > 0)
-			this.powers.active.timeSlow = true;
-		else
-			this.powers.active.timeSlow = false;
+		this.powers.keyPressed.timeSlow = true;
 	}
 	else if (event.keyCode == 37) {
 		event.preventDefault();
@@ -228,7 +206,8 @@ Game.prototype.onKeyDown = function (event) {
 
 Game.prototype.onKeyUp = function (event) {
 	if (event.keyCode == 83) {
-		this.powers.active.timeSlow = false;
+		this.powers.keyPressed.timeSlow = false;
+		this.powers.elt.timeSlow.className = this.powers.elt.timeSlow.className.replace(" active", "");
 	}
 }
 
@@ -244,11 +223,20 @@ Game.prototype.startEvents = function () {
 	window.addEventListener("resize", this.windowResize.bind(this));
 }
 
+Game.prototype.stopEvents = function () {
+	window.removeEventListener("keydown", this.onKeyDown.bind(this));
+	window.removeEventListener("keyup", this.onKeyUp.bind(this));
+	window.removeEventListener("resize", this.windowResize.bind(this));
+}
+
 var game = new Game();
 
 function mainLoop (curTime) {
-	if (game.lost)
+	if (game.lost) {
+		console.log("So long, suckah!");
+		game.stopEvents();
 		return;
+	}
 	if (!prevTime)
 		prevTime = curTime;
 	var t = curTime - prevTime;
