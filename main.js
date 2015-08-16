@@ -20,6 +20,7 @@ function Game () {
 	this.enemies = [];
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
+	this.elapsedTime = 0;
 /*	this.light = new THREE.SpotLight( 0xFFFFFF, 1, 5000, Math.PI / 2);
 	this.light.position.set( 0, 0, 0 );
 
@@ -40,24 +41,58 @@ function Game () {
 	this.backWall = makeBackWall();
 	this.scene.add(this.backWall);
 	this.scene.add(this.player.pl);
-	this.scene.add(this.player.box);
+	//this.scene.add(this.player.box);
 	this.gravity = new THREE.Vector3(0, -config.accelMag, 0);
 	this.gravChange = false;
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
+	this.lost = false;
+	this.zVel = config.zVelInit;
+	this.timeFactor = 15;
 }
 
-Game.prototype.update = function () {
+Game.prototype.playerBlockCollideCheck = function () {
+	var plPos = this.player.pl.position;
+	var plSize = this.player.size;
+	var enemyPos, enemySize;
+	for (var i = 0; i < this.enemies.length; ++i) {
+		enemyPos = this.enemies[i].en.position;
+		enemySize = this.enemies[i].size;
+		if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
+			if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
+				if (Math.abs(plPos.z - enemyPos.z) <= plSize/2 + enemySize.z/2) {
+					this.lost = true;
+					break;
+				}
+			}
+		}
+	}
+	if (!this.lost)
+		return false;
+	return true;
+}
+
+Game.prototype.update = function (timeDiff) {
 	var enemy;
 	var toDelete = [];
+	var t = timeDiff / this.timeFactor;
+	if(this.elapsedTime > config.speedUpAfter) {
+		this.timeFactor--;
+		this.elapsedTime = 0;
+	}
+	var tempVector = new THREE.Vector3(0, 0, 0);
 	//this.camera.position.y -= 15;
 	//this.player.pl.position.y -= 15;
 	//this.camera.rotation.z += 0.1;
+	if (this.playerBlockCollideCheck()) {
+		this.light.color.setHex(0xFF0000);
+		return;
+	}
 	if (this.enemyGenDist <= 0) {
 		var enemyType = Math.random() * 4;
 		var enemyX = 0, enemyY = 0;
 		var enemySize = {
-			"z": 100
+			"z": 200
 		}
 		if (enemyType < 1) {
 			enemySize.x = config.roomWidth / 2;
@@ -79,12 +114,8 @@ Game.prototype.update = function () {
 			enemySize.y = config.roomHeight / 2;
 			enemyY = -config.roomHeight / 2 + enemySize.y / 2;
 		}
-/*		var enemXOffset = config.roomWidth/2 - config.enemy.size.x/2;
-		var enemYOffset = config.roomHeight/2 - config.enemy.size.y/2;*/
 		enemy = new Enemy(
 			new THREE.Vector3(
-/*				(Math.random() * 2 * enemXOffset - enemXOffset),
-				(Math.random() * 2 * enemYOffset - enemYOffset),*/
 				enemyX,
 				enemyY,
 				-config.los - enemySize.z / 2
@@ -93,7 +124,8 @@ Game.prototype.update = function () {
 				"x": enemySize.x,
 				"y": enemySize.y,
 				"z": enemySize.z
-			}
+			},
+			this.zVel
 		);
 		this.enemies.push(enemy);
 		this.enemyGenDist = config.enemyGenDist;
@@ -101,10 +133,14 @@ Game.prototype.update = function () {
 	}
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
-			this.env[wall].position.z += config.zVel;
+			this.env[wall].position.z += this.zVel * t;
 	}
-	this.player.velocity.add(this.gravity);
-	this.player.pl.position.add(this.player.velocity);
+	tempVector.copy(this.gravity);
+	tempVector.multiplyScalar(t);
+	this.player.velocity.add(tempVector);
+	tempVector.copy(this.player.velocity);
+	tempVector.multiplyScalar(t);
+	this.player.pl.position.add(tempVector);
 	this.player.checkCollide(this.gravity, this.gravChange);
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
@@ -113,18 +149,23 @@ Game.prototype.update = function () {
 		this.camera.position.y = config.roomHeight / 2 - this.player.size - 40;
 	this.light.position.copy(this.player.pl.position);
 	this.light.position.z += config.lightPos;
+	this.light.z = 0;
+	this.light.position.y = 0;
+	this.light.position.x = 0;
 	var i;
 	for (i = 0; i < this.enemies.length; ++i) {
 		enemy = this.enemies[i];
 		if (enemy.en.position.z - enemy.size.z/2 >= 0)
 			toDelete.push(i);
 		enemy = this.enemies[i];
-		enemy.en.position.add(enemy.velocity);
+		tempVector.copy(enemy.velocity);
+		tempVector.multiplyScalar(t);
+		enemy.en.position.add(tempVector);
 	}
 	for (i = toDelete.length - 1; i >= 0; --i) {
 		this.enemies.splice(this.enemies[i], 1);
 	}
-	this.enemyGenDist -= config.zVel;
+	this.enemyGenDist -= this.zVel * t;
 	this.gravChange = false;
 	if (this.env["leftWall" + this.curWallSet].position.z + config.cameraLos >= config.roomDepth / 2) {
 		this.env.wrapWalls(this.curWallSet);
@@ -132,7 +173,7 @@ Game.prototype.update = function () {
 	}
 }
 
-Game.prototype.changeGrav = function (event) {
+Game.prototype.onKeyDown = function (event) {
 	if (event.keyCode == 37) {
 		event.preventDefault();
 		this.gravity.x = -config.accelMag;
@@ -155,19 +196,34 @@ Game.prototype.changeGrav = function (event) {
 	}
 }
 
+Game.prototype.windowResize = function () {
+	this.camera.aspect = window.innerWidth / window.innerHeight;
+	this.camera.updateProjectionMatrix();
+	this.renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 Game.prototype.startEvents = function () {
-	window.addEventListener("keydown", this.changeGrav.bind(this));
+	window.addEventListener("keydown", this.onKeyDown.bind(this));
+	window.addEventListener("resize", this.windowResize.bind(this));
 }
 
 var game = new Game();
 
 function mainLoop (curTime) {
-	game.update();
+	if (game.lost)
+		return;
+	if (!prevTime)
+		prevTime = curTime;
+	var t = curTime - prevTime;
+	game.elapsedTime += t;
+	game.update(t);
 	requestAnimationFrame(mainLoop);
 	game.renderer.render(game.scene, game.camera);
+	prevTime = curTime;
 }
 
 function main () {
+	game.windowResize();
 	game.startEvents();
 	requestAnimationFrame(mainLoop);
 }

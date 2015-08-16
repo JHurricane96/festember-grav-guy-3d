@@ -1,15 +1,15 @@
-var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
+//var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
 
 //The worst code ever written
 function Environment () {
 	var roofCeilingGeo = new THREE.PlaneBufferGeometry(config.roomWidth, config.roomDepth);
 	var wallsGeo = new THREE.PlaneBufferGeometry(config.roomHeight, config.roomDepth);
-	//var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
+	/*var envTexture = THREE.ImageUtils.loadTexture("tile.jpg");
 	envTexture.wrapS = THREE.RepeatWrapping;
 	envTexture.wrapT = THREE.RepeatWrapping;
-	envTexture.repeat.set(2, 0.1);
-	var material = new THREE.MeshPhongMaterial({map: envTexture});
-	//var material = new THREE.MeshBasicMaterial({"wireframe": true});
+	envTexture.repeat.set(2, 0.1);*/
+	//var material = new THREE.MeshPhongMaterial({map: envTexture});
+	var material = new THREE.MeshPhongMaterial({"color": 0xFFFFFF});
 	this.floor0 = new THREE.Mesh(roofCeilingGeo, material);
 	this.floor0.position.set(0, -config.roomHeight / 2, -config.roomDepth / 2);
 	this.floor0.rotation.x = -Math.PI / 2;
@@ -39,6 +39,7 @@ function Environment () {
 	this.rightWall1.rotation.z = Math.PI / 2;
 	this.rightWall1.position.set(config.roomWidth / 2, 0, -3 * config.roomDepth / 2);
 }
+//Take a breath, it's all over
 
 Environment.prototype.wrapWalls = function (curWallSet) {
 	this["floor" + curWallSet].position.z = -config.roomDepth / 2;
@@ -55,4 +56,3 @@ function makeBackWall () {
 	backWall.position.set(0, 0, -config.los);
 	return backWall;
 }
-//Take a breath, it's all over

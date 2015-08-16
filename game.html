@@ -3,13 +3,45 @@
 	<head>
 		<meta charset="utf-8" />
 		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
 			#con {
-				width: 1200px;
-				height: 600px;
+				position: relative;
+				width: 100%;
+				height: 100%;
 				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
+			}
+			canvas {
+				display: block;
+			}
+			.status-icon {
+				position: absolute;
+				z-index: 1;
+				width: 70px;
+				height: 70px;
+				margin-left: 20px;
+				text-align: center;
+			}
+			.status-icon img {
+				height: 80%;
+				-webkit-filter	: opacity(0.2);
+				-moz-filter	: opacity(0.2);
+				-ms-filter	: opacity(0.2);
+				-o-filter 	: opacity(0.2);
+				filter		: opacity(0.2);  
+			}
+			.fuel-indicator {
+				position: absolute;
+				width: 100%;
+				height: 10%;
+				background-color: rgba(0, 0, 0, 0.2);
+			}
+			#time-icon {
+				margin-top: 10px;
 			}
 		</style>
 		<script src="three.js"></script>
@@ -20,7 +52,12 @@
 		<script src="enemy.js"></script>
 	</head>
 	<body>
-		<div id="con"></div>
+		<div id="con">
+			<div class="status-icon" id="time-icon">
+				<img src="time.png">
+				<div class="fuel-indicator">
+			</div>
+		</div>
 		<script src="main.js"></script>
 	</body>
 </html>

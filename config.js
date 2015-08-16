@@ -1,13 +1,14 @@
 var config = {
 	"roomHeight": 2000,
 	"roomWidth": 4096,
-	"zVel": 100,
+	"zVelInit": 80,
+	"zVelDelta": 150,
 	"accelMag": 6,
 	"playerSize": 50,
 	"lightPos": 60,
 	"cameraPos": 120,
-	"los": 6000,
-	"cameraLos": 6000,
+	"los": 7000,
+	"cameraLos": 7000,
 	"roomDepth": 50000,
 /*	"enemy": {
 		"size": {
@@ -16,5 +17,6 @@ var config = {
 			"z": 200
 		}
 	},*/
-	"enemyGenDist": 3500
+	"enemyGenDist": 4000,
+	"speedUpAfter": 15000	// 15 seconds
 };
