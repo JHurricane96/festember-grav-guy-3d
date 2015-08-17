@@ -75,13 +75,36 @@ function Game () {
 Game.prototype.playerBlockCollideCheck = function () {
 	var plPos = this.player.pl.position;
 	var plSize = this.player.size;
-	var enemyPos, enemySize;
+	var enemyPos, enemySize, enemyType, enemyAxis;
+	var tempVector = new THREE.Vector3();
 	for (var i = 0; i < this.enemies.length; ++i) {
 		enemyPos = this.enemies[i].en.position;
 		enemySize = this.enemies[i].size;
-		if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
-			if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
-				if (Math.abs(plPos.z - enemyPos.z) <= plSize/2 + enemySize.z/2) {
+		enemyType = this.enemies[i].type;
+		enemyAxis = this.enemies[i].axis;
+		if (Math.abs(plPos.z - enemyPos.z) <= plSize/2 + enemySize.z/2) {
+			if (enemyType == "normal") {
+				if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
+					if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
+						this.lost = true;
+						break;
+					}
+				}
+			}
+			else if (/tilt/.test(enemyType)) {
+				var tempPlPos = new THREE.Vector3();
+				tempPlPos.copy(plPos);
+				tempPlPos.z = 0;
+				tempVector.copy(tempPlPos);
+				if ((enemyAxis.x < 0 && tempVector.x > 0) || (enemyAxis.x > 0 && tempVector.x < 0)) {
+					enemyAxis.x = -enemyAxis.x;
+					enemyAxis.y = -enemyAxis.y;
+				}
+				tempVector.projectOnVector(enemyAxis);
+				tempVector = tempVector.sub(tempPlPos);
+				console.log(tempPlPos, tempVector);
+				console.log(tempVector.length(), plSize/2 * Math.sqrt(2) + enemySize.y/2);
+				if (tempVector.length() < plSize/2 * Math.sqrt(2) + enemySize.y/2) {
 					this.lost = true;
 					break;
 				}
@@ -120,7 +143,7 @@ Game.prototype.update = function (timeDiff) {
 		return;
 	}
 	if (this.enemyGenDist <= 0) {
-		var enemyType = Math.random() * 4;
+		var enemyType = Math.random() * 6;
 		enemy = generateEnemy(enemyType);
 		this.enemies.push(enemy);
 		this.enemyGenDist = config.enemyGenDist;
