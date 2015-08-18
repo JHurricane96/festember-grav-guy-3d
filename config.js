@@ -3,7 +3,7 @@ var config = {
 	"roomWidth": 4096,
 	"zVel": 80,
 	"zVelDelta": 150,
-	"accelMag": 6,
+	"accelMag": 4,
 	"playerSize": 50,
 	"lightPos": 60,
 	"cameraPos": 120,

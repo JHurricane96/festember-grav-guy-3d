@@ -86,6 +86,11 @@ Game.prototype.playerBlockCollideCheck = function () {
 			if (enemyType == "normal") {
 				if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
 					if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
+						this.camera.position.z = 0;
+						this.camera.position.x = -(config.roomWidth / 2 + 100);
+						this.camera.position.y = config.roomHeight / 2;
+						this.camera.rotation.y = -Math.PI / 2;
+						this.light.position.copy(this.camera.position);
 						this.lost = true;
 						break;
 					}
@@ -102,8 +107,6 @@ Game.prototype.playerBlockCollideCheck = function () {
 				}
 				tempVector.projectOnVector(enemyAxis);
 				tempVector = tempVector.sub(tempPlPos);
-				console.log(tempPlPos, tempVector);
-				console.log(tempVector.length(), plSize/2 * Math.sqrt(2) + enemySize.y/2);
 				if (tempVector.length() < plSize/2 * Math.sqrt(2) + enemySize.y/2) {
 					this.lost = true;
 					break;
@@ -120,7 +123,6 @@ Game.prototype.update = function (timeDiff) {
 	var enemy;
 	var toDelete = [];
 	var t = timeDiff / this.timeFactor;
-	//console.log(this.powers.fuel.timeSlow);
 	if (this.powers.keyPressed.timeSlow) {
 		if (!/active/.test(this.powers.elt.timeSlow.className))
 			this.powers.elt.timeSlow.className += " active";
@@ -139,15 +141,25 @@ Game.prototype.update = function (timeDiff) {
 	//this.player.pl.position.y -= 15;
 	//this.camera.rotation.z += 0.1;
 	if (this.playerBlockCollideCheck()) {
-		this.light.color.setHex(0xFF0000);
+		//this.light.color.setHex(0xFF0000);
 		return;
 	}
 	if (this.enemyGenDist <= 0) {
-		var enemyType = Math.random() * 6;
-		enemy = generateEnemy(enemyType);
-		this.enemies.push(enemy);
-		this.enemyGenDist = config.enemyGenDist;
-		this.scene.add(enemy.en);
+		this.enemyGenDist = 0;
+		var enemyType = Math.random() * 8;
+		if (enemyType < 6) {
+			enemy = generateOneEnemy(enemyType);
+			this.enemies.push(enemy);
+			this.scene.add(enemy.en);
+		}
+		else {
+			enemy = generateTwoEnemies(enemyType);
+			this.enemies.push(enemy[0], enemy[1]);
+			this.scene.add(enemy[0].en);
+			this.scene.add(enemy[1].en);
+			this.enemyGenDist += enemy[0].size.z;
+		}
+		this.enemyGenDist += config.enemyGenDist;
 	}
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
@@ -172,9 +184,7 @@ Game.prototype.update = function (timeDiff) {
 	this.player.checkCollide(this.gravity, this.gravChange);
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
-	this.camera.position.y += 50;
-	if (this.camera.position.y + this.player.size + 50 > config.roomHeight / 2)
-		this.camera.position.y = config.roomHeight / 2 - this.player.size - 50;
+	this.camera.position.y /= ((config.roomHeight - this.player.size) / (config.roomHeight - this.player.size*3));
 	this.light.position.copy(this.player.pl.position);
 	this.light.position.z += config.lightPos;
 	this.light.z = 0;
@@ -191,6 +201,7 @@ Game.prototype.update = function (timeDiff) {
 		enemy.en.position.add(tempVector);
 	}
 	for (i = toDelete.length - 1; i >= 0; --i) {
+		this.scene.remove(this.enemies[i].en);
 		this.enemies.splice(this.enemies[i], 1);
 	}
 	this.enemyGenDist -= this.zVel * t;
