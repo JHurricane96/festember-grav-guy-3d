@@ -69,7 +69,7 @@ function Game () {
 	this.enemyGenDist = config.los;
 	this.lost = false;
 	this.zVel = config.zVel;
-	this.timeFactor = 15;
+	this.timeFactor = 10;
 }
 
 Game.prototype.playerBlockCollideCheck = function () {
@@ -83,14 +83,14 @@ Game.prototype.playerBlockCollideCheck = function () {
 		enemyType = this.enemies[i].type;
 		enemyAxis = this.enemies[i].axis;
 		if (Math.abs(plPos.z - enemyPos.z) <= plSize/2 + enemySize.z/2) {
-			if (enemyType == "normal") {
+			if (/normal/.test(enemyType)) {
 				if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
 					if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
-						this.camera.position.z = 0;
+/*						this.camera.position.z = 0;
 						this.camera.position.x = -(config.roomWidth / 2 + 100);
 						this.camera.position.y = config.roomHeight / 2;
 						this.camera.rotation.y = -Math.PI / 2;
-						this.light.position.copy(this.camera.position);
+						this.light.position.copy(this.camera.position);*/
 						this.lost = true;
 						break;
 					}
@@ -132,6 +132,12 @@ Game.prototype.update = function (timeDiff) {
 			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
 		}
 	}
+	else {
+		if (this.powers.fuel.timeSlow < 100.0) {
+			this.powers.fuel.timeSlow += config.fuelConsumeRate.timeSlow/5;
+			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
+		}
+	}
 	if(this.elapsedTime > config.speedUpAfter) {
 		this.timeFactor--;
 		this.elapsedTime = 0;
@@ -141,13 +147,14 @@ Game.prototype.update = function (timeDiff) {
 	//this.player.pl.position.y -= 15;
 	//this.camera.rotation.z += 0.1;
 	if (this.playerBlockCollideCheck()) {
-		//this.light.color.setHex(0xFF0000);
+		this.light.color.setHex(0xFF0000);
 		return;
 	}
 	if (this.enemyGenDist <= 0) {
 		this.enemyGenDist = 0;
-		var enemyType = Math.random() * 8;
-		if (enemyType < 6) {
+		var enemyType = Math.random() * 10;
+		// var enemyType = 7;
+		if (enemyType < 8) {
 			enemy = generateOneEnemy(enemyType);
 			this.enemies.push(enemy);
 			this.scene.add(enemy.en);
@@ -196,6 +203,10 @@ Game.prototype.update = function (timeDiff) {
 		if (enemy.en.position.z - enemy.size.z/2 >= 0)
 			toDelete.push(i);
 		enemy = this.enemies[i];
+		if (enemy.type == "normalMoveVer")
+			enemy.checkCollideWithEnvY();
+		else if (enemy.type == "normalMoveHrz")
+			enemy.checkCollideWithEnvX();
 		tempVector.copy(enemy.velocity);
 		tempVector.multiplyScalar(t);
 		enemy.en.position.add(tempVector);
@@ -206,7 +217,8 @@ Game.prototype.update = function (timeDiff) {
 	}
 	this.enemyGenDist -= this.zVel * t;
 	this.gravChange = false;
-	if (this.env["leftWall" + this.curWallSet].position.z + config.cameraLos >= config.roomDepth / 2) {
+	if (this.env["leftWall" + this.curWallSet].position.z - config.cameraLos >= config.roomDepth / 2) {
+		console.log(this.curWallSet);
 		this.env.wrapWalls(this.curWallSet);
 		this.curWallSet = (this.curWallSet + 1) % 2;
 	}

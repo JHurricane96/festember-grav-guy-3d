@@ -2,6 +2,7 @@ var config = {
 	"roomHeight": 2000,
 	"roomWidth": 4096,
 	"zVel": 80,
+	"enemyLinearVel": 60,
 	"zVelDelta": 150,
 	"accelMag": 4,
 	"playerSize": 50,

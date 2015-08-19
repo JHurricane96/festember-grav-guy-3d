@@ -14,7 +14,35 @@ function Enemy (position, size, zVel, type) {
 		this.axis = new THREE.Vector3(config.roomWidth, config.roomHeight, 0);
 	}
 	this.velocity = new THREE.Vector3(0, 0, zVel);
+	if (type == "normalMoveHrz")
+		this.velocity.x = config.enemyLinearVel;
+	else if (type == "normalMoveVer")
+		this.velocity.y = config.enemyLinearVel / 1.5;
 	this.type = type;
+}
+
+Enemy.prototype.checkCollideWithEnvY = function () {
+	var pos = this.en.position;
+	if (pos.y - this.size.y / 2 <= -config.roomHeight / 2) {
+		this.en.position.y = -config.roomHeight / 2 + this.size.y / 2;
+		this.velocity.y = -this.velocity.y;
+	}
+	else if (pos.y + this.size.y / 2 >= config.roomHeight / 2) {
+		this.en.position.y = config.roomHeight / 2 - this.size.y / 2;
+		this.velocity.y = -this.velocity.y;
+	}
+}
+
+Enemy.prototype.checkCollideWithEnvX = function () {
+	var pos = this.en.position;
+	if (pos.x - this.size.x / 2 <= -config.roomWidth / 2) {
+		this.en.position.x = -config.roomWidth / 2 + this.size.x / 2;
+		this.velocity.x = -this.velocity.x;
+	}
+	else if (pos.x + this.size.x / 2 >= config.roomWidth / 2) {
+		this.en.position.x = config.roomWidth / 2 - this.size.x / 2;
+		this.velocity.x = -this.velocity.x;
+	}
 }
 
 function generateOneEnemy (enemyType) {
@@ -58,10 +86,23 @@ function generateOneEnemy (enemyType) {
 		enemySize.y = config.roomHeight;
 		enemyTypeString = "tiltLeft";
 	}
+	//Top left to bottom right corner
 	else if (enemyType < 6) {
 		enemySize.x = config.roomWidth * 2;
 		enemySize.y = config.roomHeight;
 		enemyTypeString = "tiltRight";
+	}
+	//Moving horizontally
+	else if (enemyType < 7) {
+		enemySize.x = config.roomWidth / 2;
+		enemySize.y = config.roomHeight;
+		enemyTypeString = "normalMoveHrz";
+	}
+	//Moving vertically
+	else if (enemyType < 8) {
+		enemySize.x = config.roomWidth;
+		enemySize.y = config.roomHeight / 2.5;
+		enemyTypeString = "normalMoveVer";
 	}
 	enemy = new Enemy(
 		new THREE.Vector3(
@@ -85,17 +126,17 @@ function generateTwoEnemies (enemyType) {
 		"z": 3500
 	}
 	//Two long vertical slabs
-	if (enemyType < 7) {
+	if (enemyType < 9) {
 		enemySize.x = 400;
 		enemySize.y = config.roomHeight;
 		enemyX[0] = -config.roomWidth/2 + enemySize.x/2;
 		enemyX[1] = config.roomWidth/2 - enemySize.x/2;
 	}
 	//Two long horizontal slabs
-	else if (enemyType < 8) {
+	else if (enemyType < 10) {
 		enemySize.x = config.roomWidth;
 		enemySize.y = 200;
-		enemySize.z /= 2;
+		enemySize.z /= 2.5;
 		enemyY[0] = -config.roomHeight/2 + enemySize.y/2;
 		enemyY[1] = config.roomHeight/2 - enemySize.y/2;
 	}
