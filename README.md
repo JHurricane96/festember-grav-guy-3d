@@ -11,6 +11,7 @@ Current Features:
 * Collision with walls, roof and floor.
 * Walls warp (Infinitely long walls).
 * Simple block static enemies spawn. Touch them to get yourself killed.
+* Enemies that move linearly spawn.  
 (That's about it for now)
 
 Build instructions:
