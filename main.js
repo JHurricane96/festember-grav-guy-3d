@@ -1,4 +1,6 @@
 var con = document.getElementById("con");
+var startMenu = document.getElementById("start");
+var restartMenu = document.getElementById("restart");
 var prevTime;
 
 function Game () {
@@ -16,14 +18,11 @@ function Game () {
 	);
 	this.camera.position.set(0, 0, 0);
 	this.env = new Environment();
-	this.player = new Player();
-	this.enemies = [];
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
+	this.player = new Player();
+	this.enemies = [];
 	this.elapsedTime = 0;
-/*	this.keyMap = {
-		"timeSlow": false
-	}*/
 	this.powers = {
 		keyPressed: {
 			"timeSlow": false
@@ -36,24 +35,6 @@ function Game () {
 			"timeSlowFuel": document.querySelector("#time-icon .fuel-indicator")
 		}
 	}
-/*	this.fuel = {
-		"timeSlow": 100
-	};
-	this.activePowers = {
-		"timeSlow": false
-	};*/
-/*	this.light = new THREE.SpotLight( 0xFFFFFF, 1, 5000, Math.PI / 2);
-	this.light.position.set( 0, 0, 0 );
-
-	this.light.castShadow = true;
-
-	this.light.shadowMapWidth = 1024;
-	this.light.shadowMapHeight = 1024;
-
-	this.light.shadowCameraNear = 1;
-	this.light.shadowCameraFar = 5000;
-	this.light.shadowCameraFov = 114;*/
-
 	this.scene.add(this.light);
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
@@ -62,7 +43,6 @@ function Game () {
 	this.backWall = makeBackWall();
 	this.scene.add(this.backWall);
 	this.scene.add(this.player.pl);
-	//this.scene.add(this.player.box);
 	this.gravity = new THREE.Vector3(0, -config.accelMag, 0);
 	this.gravChange = false;
 	this.curWallSet = 0;
@@ -70,6 +50,40 @@ function Game () {
 	this.lost = false;
 	this.zVel = config.zVel;
 	this.timeFactor = 10;
+	this.start = false;
+}
+
+Game.prototype.reInitialize = function () {
+	this.env = new Environment();
+	this.player = new Player();
+	this.enemies = [];
+	this.light.color.setHex(0xFFFFFF);
+	this.elapsedTime = 0;
+	this.powers = {
+		keyPressed: {
+			"timeSlow": false
+		},
+		fuel: {
+			"timeSlow": 100
+		},
+		elt: {
+			"timeSlow": document.querySelector("#time-icon"),
+			"timeSlowFuel": document.querySelector("#time-icon .fuel-indicator")
+		}
+	}
+	this.powers.elt.timeSlowFuel.style.width = "100%";
+	for (var wall in this.env) {
+		if (this.env.hasOwnProperty(wall))
+			this.scene.add(this.env[wall]);
+	}
+	this.scene.add(this.player.pl);
+	this.gravChange = false;
+	this.gravity = new THREE.Vector3(0, -config.accelMag, 0);
+	this.curWallSet = 0;
+	this.enemyGenDist = config.los;
+	this.lost = false;
+	this.timeFactor = 10;
+	this.start = false;
 }
 
 Game.prototype.playerBlockCollideCheck = function () {
@@ -192,11 +206,6 @@ Game.prototype.update = function (timeDiff) {
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
 	this.camera.position.y /= ((config.roomHeight - this.player.size) / (config.roomHeight - this.player.size*3));
-	this.light.position.copy(this.player.pl.position);
-	this.light.position.z += config.lightPos;
-	this.light.z = 0;
-	this.light.position.y = 0;
-	this.light.position.x = 0;
 	var i;
 	for (i = 0; i < this.enemies.length; ++i) {
 		enemy = this.enemies[i];
@@ -218,7 +227,6 @@ Game.prototype.update = function (timeDiff) {
 	this.enemyGenDist -= this.zVel * t;
 	this.gravChange = false;
 	if (this.env["leftWall" + this.curWallSet].position.z - config.cameraLos >= config.roomDepth / 2) {
-		console.log(this.curWallSet);
 		this.env.wrapWalls(this.curWallSet);
 		this.curWallSet = (this.curWallSet + 1) % 2;
 	}
@@ -275,12 +283,43 @@ Game.prototype.stopEvents = function () {
 	window.removeEventListener("resize", this.windowResize.bind(this));
 }
 
+Game.prototype.cleanup = function () {
+	console.log("So long, suckah!");
+	this.enemies.forEach(function (enemy) {
+		this.scene.remove(enemy.en);
+	}, this);
+	for (var wall in this.env) {
+		if (this.env.hasOwnProperty(wall))
+			this.scene.remove(this.env[wall]);
+	}
+	this.scene.remove(this.player.pl);
+	this.stopEvents();
+	restart.style.display = "block";
+	window.addEventListener("keydown", restartGame);
+}
+
+function startGame (event) {
+	if (event.keyCode == 32) {
+		window.removeEventListener("keydown", startGame);
+		start.style.display = "none";
+		requestAnimationFrame(mainLoop);
+	}
+}
+
+function restartGame (event) {
+	if (event.keyCode == 32) {
+		window.removeEventListener("keydown", restartGame);
+		restart.style.display = "none";
+		game.reInitialize();
+		main();
+	}
+}
+
 var game = new Game();
 
 function mainLoop (curTime) {
 	if (game.lost) {
-		console.log("So long, suckah!");
-		game.stopEvents();
+		game.cleanup();
 		return;
 	}
 	if (!prevTime)
@@ -296,7 +335,9 @@ function mainLoop (curTime) {
 function main () {
 	game.windowResize();
 	game.startEvents();
-	requestAnimationFrame(mainLoop);
+	game.renderer.render(game.scene, game.camera);
+	start.style.display = "block";
+	window.addEventListener("keydown", startGame);
 }
 
 window.onload = main;
