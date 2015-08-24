@@ -18,6 +18,20 @@
 			canvas {
 				display: block;
 			}
+			#score {
+				position: absolute;
+				z-index: 1;
+				top: 1%;
+				left: 100%;
+				transform: translateX(-120%);
+				border-radius: 3px;
+				padding: 20px;
+				background-color: rgba(60, 60, 60, 0.5);
+				color: #CCCCCC;
+				font-size: 2em;
+				font-family: sans-serif;
+				text-align: center;
+			}
 			.status-icon {
 				position: absolute;
 				z-index: 1;
@@ -91,12 +105,39 @@
 		<script src="env.js"></script>
 		<script src="player.js"></script>
 		<script src="enemy.js"></script>
+		<!--script>
+		      window.fbAsyncInit = function() {
+		        FB.init({
+		          appId      : 'your-app-id',
+		          xfbml      : true,
+		          version    : 'v2.4'
+		        });
+		      };
+
+		      (function(d, s, id){
+		         var js, fjs = d.getElementsByTagName(s)[0];
+		         if (d.getElementById(id)) {return;}
+		         js = d.createElement(s); js.id = id;
+		         js.src = "//connect.facebook.net/en_US/sdk.js";
+		         fjs.parentNode.insertBefore(js, fjs);
+		       }(document, 'script', 'facebook-jssdk'));
+		</script-->
+		<!--script>
+		    function fbShare(url, title, descr, image, winWidth, winHeight) {
+		        var winTop = (screen.height / 2) - (winHeight / 2);
+		        var winLeft = (screen.width / 2) - (winWidth / 2);
+		        window.open('http://www.facebook.com/sharer.php?s=100&p[title]=' + title + '&p[summary]=' + descr + '&p[url]=' + url + '&p[images][0]=' + image, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+		    }
+		</script-->
 	</head>
 	<body>
 		<div id="con">
 			<div class="status-icon" id="time-icon">
 				<img src="time.png">
-				<div class="fuel-indicator">
+				<div class="fuel-indicator"></div>
+			</div>
+			<div id="score">
+				Hi
 			</div>
 		</div>
 		<div id="start" class="menu">
@@ -104,6 +145,7 @@
 		</div>
 		<div id="restart" class="menu">
 			<p>You died. Press SPACE to restart</p>
+			<!--a href="javascript:fbShare('http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350)">Share</a-->
 		</div>
 		<script src="main.js"></script>
 	</body>

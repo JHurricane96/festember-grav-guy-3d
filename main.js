@@ -21,8 +21,9 @@ function Game () {
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
 	this.player = new Player();
+	this.coins = [];
 	this.enemies = [];
-	this.elapsedTime = 0;
+	this.timeToSpeedUp = 0;
 	this.powers = {
 		keyPressed: {
 			"timeSlow": false
@@ -49,16 +50,19 @@ function Game () {
 	this.enemyGenDist = config.los;
 	this.lost = false;
 	this.zVel = config.zVel;
-	this.timeFactor = 10;
+	this.timeFactor = 20;
 	this.start = false;
+	this.score = 0;
+	this.scoreCard = document.getElementById("score");
 }
 
 Game.prototype.reInitialize = function () {
 	this.env = new Environment();
 	this.player = new Player();
+	this.coins = [];
 	this.enemies = [];
 	this.light.color.setHex(0xFFFFFF);
-	this.elapsedTime = 0;
+	this.timeToSpeedUp = 0;
 	this.powers = {
 		keyPressed: {
 			"timeSlow": false
@@ -77,13 +81,15 @@ Game.prototype.reInitialize = function () {
 			this.scene.add(this.env[wall]);
 	}
 	this.scene.add(this.player.pl);
-	this.gravChange = false;
 	this.gravity = new THREE.Vector3(0, -config.accelMag, 0);
+	this.gravChange = false;
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
 	this.lost = false;
-	this.timeFactor = 10;
+	this.timeFactor = 20;
 	this.start = false;
+	this.score = 0;
+	this.scoreCard.innerHTML = "Hi";
 }
 
 Game.prototype.playerBlockCollideCheck = function () {
@@ -133,8 +139,21 @@ Game.prototype.playerBlockCollideCheck = function () {
 	return true;
 }
 
+Game.prototype.playerCoinCollideCheck = function (coin) {
+	var plPos = this.player.pl.position;
+	var plSize = this.player.size;
+	if (Math.abs(coin.cn.position.z - plPos.z) <= plSize / 2 + coin.size.r) {
+		if (Math.abs(coin.cn.position.y - plPos.y) <= plSize / 2 + coin.size.r) {
+			if (Math.abs(coin.cn.position.x - plPos.x) <= plSize / 2 + coin.size.r) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 Game.prototype.update = function (timeDiff) {
-	var enemy;
+	var enemy, coins;
 	var toDelete = [];
 	var t = timeDiff / this.timeFactor;
 	if (this.powers.keyPressed.timeSlow) {
@@ -152,9 +171,9 @@ Game.prototype.update = function (timeDiff) {
 			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
 		}
 	}
-	if(this.elapsedTime > config.speedUpAfter) {
+	if(this.timeToSpeedUp > config.speedUpAfter && this.timeFactor > config.maxTimeFactor) {
 		this.timeFactor--;
-		this.elapsedTime = 0;
+		this.timeToSpeedUp = 0;
 	}
 	var tempVector = new THREE.Vector3(0, 0, 0);
 	//this.camera.position.y -= 15;
@@ -166,25 +185,74 @@ Game.prototype.update = function (timeDiff) {
 	}
 	if (this.enemyGenDist <= 0) {
 		this.enemyGenDist = 0;
-		var enemyType = Math.random() * 10;
-		// var enemyType = 7;
+		var enemyType = Math.random() * 14;
+		// var enemyType = 11;
 		if (enemyType < 8) {
 			enemy = generateOneEnemy(enemyType);
 			this.enemies.push(enemy);
 			this.scene.add(enemy.en);
 		}
-		else {
+		else if (enemyType < 10) {
 			enemy = generateTwoEnemies(enemyType);
 			this.enemies.push(enemy[0], enemy[1]);
 			this.scene.add(enemy[0].en);
 			this.scene.add(enemy[1].en);
 			this.enemyGenDist += enemy[0].size.z;
 		}
+		else {
+			coins = generateCoins(enemyType % 10, config.coin.number);
+			coins.forEach(function (coin) {
+				this.coins.push(coin);
+				this.scene.add(coin.cn);
+			}, this);
+			this.enemyGenDist += config.coin.number * config.coin.distBetween - config.enemyGenDist / 3;
+		}
 		this.enemyGenDist += config.enemyGenDist;
 	}
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
 			this.env[wall].position.z += this.zVel * t;
+	}
+	var i;
+	for (i = 0; i < this.enemies.length; ++i) {
+		enemy = this.enemies[i];
+		if (enemy.en.position.z - enemy.size.z/2 >= 0)
+			toDelete.push(i);
+		enemy = this.enemies[i];
+		if (enemy.type == "normalMoveVer")
+			enemy.checkCollideWithEnvY();
+		else if (enemy.type == "normalMoveHrz")
+			enemy.checkCollideWithEnvX();
+		tempVector.copy(enemy.velocity);
+		tempVector.multiplyScalar(t);
+		enemy.en.position.add(tempVector);
+	}
+	console.log(toDelete);
+	for (i = toDelete.length - 1; i >= 0; --i) {
+		this.scene.remove(this.enemies[i].en);
+		this.enemies.splice(this.enemies[i], 1);
+	}
+	toDelete = [];
+	for (i = 0; i < this.coins.length; ++i) {
+		coin = this.coins[i];
+		if (this.playerCoinCollideCheck(coin)) {
+			toDelete.push(i);
+			this.score += config.zVel * t * config.coin.scoreMult;
+		}
+		else if (coin.cn.position.z - coin.size.t / 2 >= 0)
+			toDelete.push(i);
+		coin.cn.position.z += coin.velocity.z * t;
+		coin.cn.rotation.z += coin.omega * t;
+	}
+	for (i = toDelete.length - 1; i >= 0; --i) {
+		this.scene.remove(this.coins[i].cn);
+		this.coins.splice(i, 1);
+	}
+	this.enemyGenDist -= this.zVel * t;
+	this.gravChange = false;
+	if (this.env["leftWall" + this.curWallSet].position.z - config.cameraLos >= config.roomDepth / 2) {
+		this.env.wrapWalls(this.curWallSet);
+		this.curWallSet = (this.curWallSet + 1) % 2;
 	}
 	if (this.powers.keyPressed.timeSlow && this.powers.fuel.timeSlow > 0) {
 		tempVector.copy(this.gravity);
@@ -206,30 +274,8 @@ Game.prototype.update = function (timeDiff) {
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
 	this.camera.position.y /= ((config.roomHeight - this.player.size) / (config.roomHeight - this.player.size*3));
-	var i;
-	for (i = 0; i < this.enemies.length; ++i) {
-		enemy = this.enemies[i];
-		if (enemy.en.position.z - enemy.size.z/2 >= 0)
-			toDelete.push(i);
-		enemy = this.enemies[i];
-		if (enemy.type == "normalMoveVer")
-			enemy.checkCollideWithEnvY();
-		else if (enemy.type == "normalMoveHrz")
-			enemy.checkCollideWithEnvX();
-		tempVector.copy(enemy.velocity);
-		tempVector.multiplyScalar(t);
-		enemy.en.position.add(tempVector);
-	}
-	for (i = toDelete.length - 1; i >= 0; --i) {
-		this.scene.remove(this.enemies[i].en);
-		this.enemies.splice(this.enemies[i], 1);
-	}
-	this.enemyGenDist -= this.zVel * t;
-	this.gravChange = false;
-	if (this.env["leftWall" + this.curWallSet].position.z - config.cameraLos >= config.roomDepth / 2) {
-		this.env.wrapWalls(this.curWallSet);
-		this.curWallSet = (this.curWallSet + 1) % 2;
-	}
+	this.score += config.zVel * t;
+	this.scoreCard.innerHTML = Math.floor(this.score / config.scoreFactor);
 }
 
 Game.prototype.onKeyDown = function (event) {
@@ -288,6 +334,9 @@ Game.prototype.cleanup = function () {
 	this.enemies.forEach(function (enemy) {
 		this.scene.remove(enemy.en);
 	}, this);
+	this.coins.forEach(function (coin) {
+		this.scene.remove(coin.cn);
+	}, this);
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
 			this.scene.remove(this.env[wall]);
@@ -325,7 +374,7 @@ function mainLoop (curTime) {
 	if (!prevTime)
 		prevTime = curTime;
 	var t = curTime - prevTime;
-	game.elapsedTime += t;
+	game.timeToSpeedUp += t;
 	game.update(t);
 	requestAnimationFrame(mainLoop);
 	game.renderer.render(game.scene, game.camera);
@@ -337,6 +386,7 @@ function main () {
 	game.startEvents();
 	game.renderer.render(game.scene, game.camera);
 	start.style.display = "block";
+	prevTime = undefined;
 	window.addEventListener("keydown", startGame);
 }
 

@@ -55,3 +55,49 @@ function makeBackWall () {
 	backWall.position.set(0, 0, -config.los);
 	return backWall;
 }
+
+function Coin (position, size, zVel) {
+	var coinGeo = new THREE.CylinderGeometry(
+		size.r,
+		size.r,
+		size.t,
+		32
+	);
+	var coinMaterial = new THREE.MeshPhongMaterial({"color": 0xFFD700, "transparent": true});
+	coinMaterial.opacity = 0.6;
+	this.cn = new THREE.Mesh(coinGeo, coinMaterial);
+	this.cn.position.copy(position);
+	this.size = size;
+	this.velocity = new THREE.Vector3(0, 0, zVel);
+	this.omega = config.coin.omega;
+}
+
+function generateCoins (type, coinsNo) {
+	var coins = [];
+	var coin;
+	var size = {
+		"r": config.coin.radius,
+		"t": config.coin.thick
+	};
+	var position = new THREE.Vector3(0, 0, -config.los - size.t / 2);
+	//Top
+	if (type < 1)
+		position.y = config.roomHeight / 2 - size.r;
+	//Bottom
+	else if (type < 2)
+		position.y = -config.roomHeight / 2 + size.r;
+	//Left
+	else if (type < 3)
+		position.x = -config.roomWidth / 2 + size.r;
+	//Right
+	else if (type < 4)
+		position.x = config.roomWidth / 2 - size.r;
+	for (var i = 0; i < coinsNo; ++i) {
+		coin = new Coin(position, size, config.zVel);
+		coin.cn.rotation.x = Math.PI / 2;
+		coin.cn.rotation.z = Math.random() * Math.PI;
+		coins.push(coin);
+		position.z -= config.coin.distBetween;
+	}
+	return coins;
+}

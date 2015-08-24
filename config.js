@@ -3,7 +3,14 @@ var config = {
 	"roomWidth": 4096,
 	"zVel": 80,
 	"enemyLinearVel": 60,
-	"zVelDelta": 150,
+	"coin": {
+		"radius": 75,
+		"thick": 25,
+		"omega": 0.1,
+		"distBetween": 200,
+		"number": 20,
+		"scoreMult": 200,
+	},
 	"accelMag": 4,
 	"playerSize": 50,
 	"lightPos": 60,
@@ -23,5 +30,7 @@ var config = {
 	"fuelConsumeRate": {
 		"timeSlow": 0.3
 	},
-	"timeSlowFactor": 10
+	"timeSlowFactor": 10,
+	"scoreFactor": 3000,
+	"maxTimeFactor": 10
 };
