@@ -50,7 +50,7 @@ function Game () {
 	this.enemyGenDist = config.los;
 	this.lost = false;
 	this.zVel = config.zVel;
-	this.timeFactor = 20;
+	this.timeFactor = config.startTimeFactor;
 	this.start = false;
 	this.score = 0;
 	this.scoreCard = document.getElementById("score");
@@ -86,10 +86,10 @@ Game.prototype.reInitialize = function () {
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
 	this.lost = false;
-	this.timeFactor = 20;
+	this.timeFactor = config.startTimeFactor;
 	this.start = false;
 	this.score = 0;
-	this.scoreCard.innerHTML = "Hi";
+	this.scoreCard.innerHTML = "Hi !";
 }
 
 Game.prototype.playerBlockCollideCheck = function () {
@@ -227,7 +227,6 @@ Game.prototype.update = function (timeDiff) {
 		tempVector.multiplyScalar(t);
 		enemy.en.position.add(tempVector);
 	}
-	console.log(toDelete);
 	for (i = toDelete.length - 1; i >= 0; --i) {
 		this.scene.remove(this.enemies[i].en);
 		this.enemies.splice(this.enemies[i], 1);

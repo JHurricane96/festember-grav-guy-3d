@@ -8,7 +8,7 @@ var config = {
 		"thick": 25,
 		"omega": 0.1,
 		"distBetween": 200,
-		"number": 20,
+		"number": 7,
 		"scoreMult": 200,
 	},
 	"accelMag": 4,
@@ -30,6 +30,7 @@ var config = {
 	"fuelConsumeRate": {
 		"timeSlow": 0.3
 	},
+	"startTimeFactor": 20,
 	"timeSlowFactor": 10,
 	"scoreFactor": 3000,
 	"maxTimeFactor": 10

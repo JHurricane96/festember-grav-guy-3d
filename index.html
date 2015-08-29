@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
+			#con {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+			}
+			canvas {
+				display: block;
+			}
+			#score {
+				position: absolute;
+				z-index: 1;
+				top: 1%;
+				left: 100%;
+				transform: translateX(-120%);
+				border-radius: 3px;
+				padding: 20px;
+				white-space: nowrap;
+				background-color: rgba(60, 60, 60, 0.5);
+				color: #CCCCCC;
+				font-size: 2em;
+				font-family: sans-serif;
+				text-align: center;
+			}
+			.status-icon {
+				position: absolute;
+				z-index: 1;
+				width: 70px;
+				height: 70px;
+				margin-left: 20px;
+				text-align: center;
+				-webkit-filter	: opacity(0.2);
+				-moz-filter	: opacity(0.2);
+				-ms-filter	: opacity(0.2);
+				-o-filter 	: opacity(0.2);
+				filter		: opacity(0.2);
+			}
+			.status-icon.active {
+				-webkit-filter	: opacity(1);
+				-moz-filter	: opacity(1);
+				-ms-filter	: opacity(1);
+				-o-filter 	: opacity(1);
+				filter		: opacity(1);
+			}
+			.status-icon img {
+				height: 80%;
+			}
+			.fuel-indicator {
+				position: absolute;
+				width: 100%;
+				height: 10%;
+				background-color: black;
+			}
+			#time-icon {
+				margin-top: 10px;
+			}
+			.menu {
+				border-radius: 3px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 80%;
+				height: 50%;
+				transform: translate(-50%, -50%);
+				background-color: rgba(60, 60, 60, 0.3);
+				display: none;
+			}
+			.menu p {
+				font-weight: 100;
+				font-family: Calibri;
+				text-align: center;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -100%);
+				color: #DDDDDD;
+				font-size: 3em;
+				animation-duration: 0.9s;
+				animation-name: flash;
+				animation-iteration-count: infinite;
+				animation-direction: alternate;
+			}
+			@keyframes flash {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+		</style>
+		<script src="three.js"></script>
+		<!--script src="vector.js"></script-->
+		<script src="config.js"></script>
+		<script src="env.js"></script>
+		<script src="player.js"></script>
+		<script src="enemy.js"></script>
+		<!--script>
+		      window.fbAsyncInit = function() {
+		        FB.init({
+		          appId      : 'your-app-id',
+		          xfbml      : true,
+		          version    : 'v2.4'
+		        });
+		      };
+
+		      (function(d, s, id){
+		         var js, fjs = d.getElementsByTagName(s)[0];
+		         if (d.getElementById(id)) {return;}
+		         js = d.createElement(s); js.id = id;
+		         js.src = "//connect.facebook.net/en_US/sdk.js";
+		         fjs.parentNode.insertBefore(js, fjs);
+		       }(document, 'script', 'facebook-jssdk'));
+		</script-->
+		<!--script>
+		    function fbShare(url, title, descr, image, winWidth, winHeight) {
+		        var winTop = (screen.height / 2) - (winHeight / 2);
+		        var winLeft = (screen.width / 2) - (winWidth / 2);
+		        window.open('http://www.facebook.com/sharer.php?s=100&p[title]=' + title + '&p[summary]=' + descr + '&p[url]=' + url + '&p[images][0]=' + image, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+		    }
+		</script-->
+	</head>
+	<body>
+		<div id="con">
+			<div class="status-icon" id="time-icon">
+				<img src="time.png">
+				<div class="fuel-indicator"></div>
+			</div>
+			<div id="score">
+				Hi !
+			</div>
+		</div>
+		<div id="start" class="menu">
+			<p>Press SPACE to start</p>
+		</div>
+		<div id="restart" class="menu">
+			<p>You died. Press SPACE to restart</p>
+			<!--a href="javascript:fbShare('http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350)">Share</a-->
+		</div>
+		<script src="main.js"></script>
+	</body>
+</html>

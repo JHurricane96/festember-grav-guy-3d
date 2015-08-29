@@ -80,18 +80,26 @@ function generateCoins (type, coinsNo) {
 		"t": config.coin.thick
 	};
 	var position = new THREE.Vector3(0, 0, -config.los - size.t / 2);
-	//Top
-	if (type < 1)
+	//Top right corner
+	if (type < 1) {
 		position.y = config.roomHeight / 2 - size.r;
-	//Bottom
-	else if (type < 2)
-		position.y = -config.roomHeight / 2 + size.r;
-	//Left
-	else if (type < 3)
-		position.x = -config.roomWidth / 2 + size.r;
-	//Right
-	else if (type < 4)
 		position.x = config.roomWidth / 2 - size.r;
+	}
+	//Bottom right corner
+	else if (type < 2) {
+		position.y = -config.roomHeight / 2 + size.r;
+		position.x = config.roomWidth / 2 - size.r;
+	}
+	//Top left corner 
+	else if (type < 3) {
+		position.y = config.roomHeight / 2 - size.r;
+		position.x = -config.roomWidth / 2 + size.r;
+	}
+	//Bottom left corner
+	else if (type < 4) {
+		position.y = -config.roomHeight / 2 + size.r;
+		position.x = -config.roomWidth / 2 + size.r;
+	}
 	for (var i = 0; i < coinsNo; ++i) {
 		coin = new Coin(position, size, config.zVel);
 		coin.cn.rotation.x = Math.PI / 2;
