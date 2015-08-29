@@ -107,23 +107,6 @@
 		<script src="player.js"></script>
 		<script src="enemy.js"></script>
 		<!--script>
-		      window.fbAsyncInit = function() {
-		        FB.init({
-		          appId      : 'your-app-id',
-		          xfbml      : true,
-		          version    : 'v2.4'
-		        });
-		      };
-
-		      (function(d, s, id){
-		         var js, fjs = d.getElementsByTagName(s)[0];
-		         if (d.getElementById(id)) {return;}
-		         js = d.createElement(s); js.id = id;
-		         js.src = "//connect.facebook.net/en_US/sdk.js";
-		         fjs.parentNode.insertBefore(js, fjs);
-		       }(document, 'script', 'facebook-jssdk'));
-		</script-->
-		<!--script>
 		    function fbShare(url, title, descr, image, winWidth, winHeight) {
 		        var winTop = (screen.height / 2) - (winHeight / 2);
 		        var winLeft = (screen.width / 2) - (winWidth / 2);
@@ -132,6 +115,23 @@
 		</script-->
 	</head>
 	<body>
+		<script>
+			window.fbAsyncInit = function() {
+			    FB.init({
+			      appId      : '526383454175723',
+			      xfbml      : true,
+			      version    : 'v2.4'
+			    });
+			  };
+
+			  (function(d, s, id){
+			     var js, fjs = d.getElementsByTagName(s)[0];
+			     if (d.getElementById(id)) {return;}
+			     js = d.createElement(s); js.id = id;
+			     js.src = "//connect.facebook.net/en_US/sdk.js";
+			     fjs.parentNode.insertBefore(js, fjs);
+			   }(document, 'script', 'facebook-jssdk'));
+		</script>
 		<div id="con">
 			<div class="status-icon" id="time-icon">
 				<img src="time.png">
@@ -143,6 +143,12 @@
 		</div>
 		<div id="start" class="menu">
 			<p>Press SPACE to start</p>
+			<div
+			  class="fb-like"
+			  data-share="true"
+			  data-width="450"
+			  data-show-faces="true">
+			</div>
 		</div>
 		<div id="restart" class="menu">
 			<p>You died. Press SPACE to restart</p>
