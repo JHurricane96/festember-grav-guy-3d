@@ -1,6 +1,8 @@
 var con = document.getElementById("con");
 var startMenu = document.getElementById("start");
 var restartMenu = document.getElementById("restart");
+var instructMenu = document.getElementById("instructions");
+var instructButton = document.querySelector("button#instruct-disp");
 var prevTime;
 
 function Game () {
@@ -316,10 +318,16 @@ Game.prototype.windowResize = function () {
 	this.renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function instructionDisplay() {
+	startMenu.style.display = "none";
+	instructMenu.style.display = "block";
+}
+
 Game.prototype.startEvents = function () {
 	window.addEventListener("keydown", this.onKeyDown.bind(this));
 	window.addEventListener("keyup", this.onKeyUp.bind(this));
 	window.addEventListener("resize", this.windowResize.bind(this));
+	instructButton.addEventListener("click", instructionDisplay);
 }
 
 Game.prototype.stopEvents = function () {
@@ -342,14 +350,15 @@ Game.prototype.cleanup = function () {
 	}
 	this.scene.remove(this.player.pl);
 	this.stopEvents();
-	restart.style.display = "block";
+	restartMenu.style.display = "block";
 	window.addEventListener("keydown", restartGame);
 }
 
 function startGame (event) {
 	if (event.keyCode == 32) {
 		window.removeEventListener("keydown", startGame);
-		start.style.display = "none";
+		startMenu.style.display = "none";
+		instructMenu.style.display = "none";
 		requestAnimationFrame(mainLoop);
 	}
 }
@@ -357,7 +366,7 @@ function startGame (event) {
 function restartGame (event) {
 	if (event.keyCode == 32) {
 		window.removeEventListener("keydown", restartGame);
-		restart.style.display = "none";
+		restartMenu.style.display = "none";
 		game.reInitialize();
 		main();
 	}
@@ -384,7 +393,7 @@ function main () {
 	game.windowResize();
 	game.startEvents();
 	game.renderer.render(game.scene, game.camera);
-	start.style.display = "block";
+	startMenu.style.display = "block";
 	prevTime = undefined;
 	window.addEventListener("keydown", startGame);
 }

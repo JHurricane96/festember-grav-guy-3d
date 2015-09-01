@@ -75,21 +75,51 @@
 				transform: translate(-50%, -50%);
 				background-color: rgba(60, 60, 60, 0.3);
 				display: none;
+				text-align: center;
+			}
+			#instructions {
+				height: auto;
+				padding: 20px;
 			}
 			.menu p {
 				font-weight: 100;
 				font-family: Calibri;
 				text-align: center;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -100%);
 				color: #DDDDDD;
-				font-size: 3em;
+				font-size: 2em;
+			}
+			.menu p.flash {				
 				animation-duration: 0.9s;
 				animation-name: flash;
 				animation-iteration-count: infinite;
 				animation-direction: alternate;
+			}
+			.menu.center p {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				font-size: 3em;
+				transform: translate(-50%, -150%);
+			}
+			button {
+				position: relative;
+				top: 71%;
+				padding: 10px;
+				background-color: transparent;
+				border-radius: 1px;
+				font-size: 1.2em;
+				border: 1px solid black;
+				color: white;
+				transition: 0.15s all;
+			}
+			button:hover {
+				cursor: pointer;
+				background-color: rgba(40, 40, 40, 0.5);
+				color: #CCCCCC;
+				border-color: white;
+			}
+			button:active {
+				outline: none;
 			}
 			@keyframes flash {
 				from {
@@ -140,11 +170,24 @@
 				Hi !
 			</div>
 		</div>
-		<div id="start" class="menu">
-			<p>Press SPACE to start</p>
+		<div id="start" class="menu center">
+			<p class="flash">Press SPACE to start</p>
+			<button id="instruct-disp">Instructions</button>
 		</div>
-		<div id="restart" class="menu">
-			<p>You died. Press SPACE to restart</p>
+		<div id="instructions" class="menu">
+			<h1>Instructions</h1>
+			<p>You are Bong the Box. Your aim is to survive the torrent of
+				random objects that are thrown at you. You have but two powers - 
+				control over gravity and over time. Press the arrow keys to change
+				the direction in which gravity acts. Press and hold 'S' to slow
+				down time. Note that you can only slow time for a while - you must
+				let your power recharge too. Apart from your foes, coins are also strewn
+				in your path - try collecting as many coins as possible.
+			</p>
+			<p>May luck be with you!</p>
+		</div>
+		<div id="restart" class="menu center">
+			<p class="flash">You died. Press SPACE to restart</p>
 			<div
 			  class="fb-like"
 			  data-share="true"
