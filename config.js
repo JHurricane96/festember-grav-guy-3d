@@ -26,6 +26,7 @@ var config = {
 		}
 	},*/
 	"enemyGenDist": 4000,
+	"enemyTypesNo": 14,
 	"speedUpAfter": 15000,	// 15 seconds
 	"fuelConsumeRate": {
 		"timeSlow": 0.3

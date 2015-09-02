@@ -14,10 +14,18 @@ function Enemy (position, size, zVel, type) {
 		this.axis = new THREE.Vector3(config.roomWidth, config.roomHeight, 0);
 	}
 	this.velocity = new THREE.Vector3(0, 0, zVel);
-	if (type == "normalMoveHrz")
-		this.velocity.x = config.enemyLinearVel;
-	else if (type == "normalMoveVer")
-		this.velocity.y = config.enemyLinearVel / 1.5;
+	if (type == "normalMoveHrz") {
+		if (Math.random() * 2 < 1)
+			this.velocity.x = config.enemyLinearVel;
+		else
+			this.velocity.x = -config.enemyLinearVel;
+	}
+	else if (type == "normalMoveVer") {
+		if (Math.random() * 2 < 1)
+			this.velocity.y = config.enemyLinearVel/2;
+		else
+			this.velocity.y = -config.enemyLinearVel/2;
+	}
 	this.type = type;
 }
 
@@ -101,7 +109,8 @@ function generateOneEnemy (enemyType) {
 	//Moving vertically
 	else if (enemyType < 8) {
 		enemySize.x = config.roomWidth;
-		enemySize.y = config.roomHeight / 2.5;
+		enemySize.y = config.roomHeight / 2;
+		// enemyY = (Math.random() * config.roomHeight - enemySize.y) - config.roomHeight/2 + enemySize.y/2;
 		enemyTypeString = "normalMoveVer";
 	}
 	enemy = new Enemy(

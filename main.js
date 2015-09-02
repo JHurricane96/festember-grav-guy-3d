@@ -7,7 +7,6 @@ var prevTime;
 
 function Game () {
 	this.renderer = new THREE.WebGLRenderer({"antialias": true});
-	//this.renderer.shadowMapEnabled = true;
 	this.renderer.setClearColor(0xFFFFFF, 1);
 	this.renderer.setSize(con.offsetWidth, con.offsetHeight);
 	con.appendChild(this.renderer.domElement);
@@ -50,6 +49,7 @@ function Game () {
 	this.gravChange = false;
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
+	this.curEnemyTypes = 10;
 	this.lost = false;
 	this.zVel = config.zVel;
 	this.timeFactor = config.startTimeFactor;
@@ -87,6 +87,7 @@ Game.prototype.reInitialize = function () {
 	this.gravChange = false;
 	this.curWallSet = 0;
 	this.enemyGenDist = config.los;
+	this.curEnemyTypes = 10;
 	this.lost = false;
 	this.timeFactor = config.startTimeFactor;
 	this.start = false;
@@ -108,11 +109,6 @@ Game.prototype.playerBlockCollideCheck = function () {
 			if (/normal/.test(enemyType)) {
 				if (Math.abs(plPos.y - enemyPos.y) <= plSize/2 + enemySize.y/2) {
 					if (Math.abs(plPos.x - enemyPos.x) <= plSize/2 + enemySize.x/2) {
-/*						this.camera.position.z = 0;
-						this.camera.position.x = -(config.roomWidth / 2 + 100);
-						this.camera.position.y = config.roomHeight / 2;
-						this.camera.rotation.y = -Math.PI / 2;
-						this.light.position.copy(this.camera.position);*/
 						this.lost = true;
 						break;
 					}
@@ -176,38 +172,37 @@ Game.prototype.update = function (timeDiff) {
 	if(this.timeToSpeedUp > config.speedUpAfter && this.timeFactor > config.maxTimeFactor) {
 		this.timeFactor--;
 		this.timeToSpeedUp = 0;
+		if (this.curEnemyTypes < config.enemyTypesNo)
+			this.curEnemyTypes += 2;
 	}
 	var tempVector = new THREE.Vector3(0, 0, 0);
-	//this.camera.position.y -= 15;
-	//this.player.pl.position.y -= 15;
-	//this.camera.rotation.z += 0.1;
 	if (this.playerBlockCollideCheck()) {
 		this.light.color.setHex(0xFF0000);
 		return;
 	}
 	if (this.enemyGenDist <= 0) {
 		this.enemyGenDist = 0;
-		var enemyType = Math.random() * 14;
-		// var enemyType = 11;
-		if (enemyType < 8) {
-			enemy = generateOneEnemy(enemyType);
-			this.enemies.push(enemy);
-			this.scene.add(enemy.en);
-		}
-		else if (enemyType < 10) {
-			enemy = generateTwoEnemies(enemyType);
-			this.enemies.push(enemy[0], enemy[1]);
-			this.scene.add(enemy[0].en);
-			this.scene.add(enemy[1].en);
-			this.enemyGenDist += enemy[0].size.z;
-		}
-		else {
-			coins = generateCoins(enemyType % 10, config.coin.number);
+		var enemyType = Math.random() * this.curEnemyTypes;
+		// var enemyType = 7;
+		if (enemyType < 4) {
+			coins = generateCoins(enemyType, config.coin.number);
 			coins.forEach(function (coin) {
 				this.coins.push(coin);
 				this.scene.add(coin.cn);
 			}, this);
 			this.enemyGenDist += config.coin.number * config.coin.distBetween - config.enemyGenDist / 3;
+		}
+		else if (enemyType < 12) {
+			enemy = generateOneEnemy(enemyType - 4);
+			this.enemies.push(enemy);
+			this.scene.add(enemy.en);
+		}
+		else if (enemyType < 14) {
+			enemy = generateTwoEnemies(enemyType - 4);
+			this.enemies.push(enemy[0], enemy[1]);
+			this.scene.add(enemy[0].en);
+			this.scene.add(enemy[1].en);
+			this.enemyGenDist += enemy[0].size.z;
 		}
 		this.enemyGenDist += config.enemyGenDist;
 	}
