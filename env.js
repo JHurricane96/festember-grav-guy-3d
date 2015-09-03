@@ -64,7 +64,7 @@ function Coin (position, size, zVel) {
 		32
 	);
 	var coinMaterial = new THREE.MeshPhongMaterial({"color": 0xFFD700, "transparent": true});
-	coinMaterial.opacity = 0.6;
+	coinMaterial.opacity = 0.8;
 	this.cn = new THREE.Mesh(coinGeo, coinMaterial);
 	this.cn.position.copy(position);
 	this.size = size;

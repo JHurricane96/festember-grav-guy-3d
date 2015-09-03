@@ -5,9 +5,9 @@ var config = {
 	"enemyLinearVel": 60,
 	"coin": {
 		"radius": 75,
-		"thick": 25,
+		"thick": 10,
 		"omega": 0.1,
-		"distBetween": 200,
+		"distBetween": 280,
 		"number": 7,
 		"scoreMult": 200,
 	},

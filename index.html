@@ -65,6 +65,9 @@
 			#time-icon {
 				margin-top: 10px;
 			}
+			p {
+				margin: 0;
+			}
 			.menu {
 				border-radius: 3px;
 				position: absolute;
@@ -77,18 +80,49 @@
 				display: none;
 				text-align: center;
 			}
-			#instructions {
+			#start {
 				height: auto;
 				padding: 40px;
+				color: #CCCCCC;
+				font-family: Calibri, sans-serif;
+				font-weight: 100;
+			}
+			#pause {
+				display: none;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: black;
+				color: white;
+			}
+			#start h1 {
+				font-size: 3em;
+				font-weight: 100;
+			}
+			#start ul {
+				padding: 0;
+				list-style: none;
+				font-size: 1.8em;
+			}
+			#start p.flash {
+				font-size: 3em;
+			}
+			#pause p {
+				margin: 0;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+				font-size: 4em;
 			}
 			.menu p {
 				font-weight: 100;
-				font-family: Calibri;
+				font-family: Calibri, sans-serif;
 				text-align: center;
 				color: #DDDDDD;
 				font-size: 2em;
 			}
-			.menu p.flash {				
+			p.flash {				
 				animation-duration: 0.9s;
 				animation-name: flash;
 				animation-iteration-count: infinite;
@@ -99,12 +133,7 @@
 				top: 50%;
 				left: 50%;
 				font-size: 3em;
-			}
-			#start p {
-				transform: translate(-50%, -150%);
-			}
-			#restart p {
-				transform: translate(-50%, -100%);
+				transform: translate(-50%, -50%);
 			}
 			button {
 				position: relative;
@@ -174,21 +203,23 @@
 				Hi !
 			</div>
 		</div>
-		<div id="start" class="menu center">
+<!-- 		<div id="instructions" class="menu center">
 			<p class="flash">Press SPACE to start</p>
 			<button id="instruct-disp">Instructions</button>
+		</div> -->
+		<div id="start" class="menu">
+			<h1>Welcome !</h1>
+			<ul>
+				<li>Arrow keys - Movement</li>
+				<li>S - Slow time</li>
+				<li>Esc - Pause</li>
+				<li>Avoid the blue obstacles.</li>
+				<li>Collect the coins.</li>
+			</ul>
+			<p class="flash">Press SPACE to start</p>
 		</div>
-		<div id="instructions" class="menu">
-			<h1>Instructions</h1>
-			<p>You are Bong the Box. Your aim is to survive the torrent of
-				random objects that are thrown at you. You have but two powers - 
-				control over gravity and over time. Press the arrow keys to change
-				the direction in which gravity acts. Press and hold 'S' to slow
-				down time. Note that you can only slow time for a while - you must
-				let your power recharge too. Apart from your foes, coins are also strewn
-				in your path - try collecting as many coins as possible.
-			</p>
-			<p>May luck be with you!</p>
+		<div id="pause">
+			<p class="flash">PAUSED</p>
 		</div>
 		<div id="restart" class="menu center">
 			<p class="flash">You died. Press SPACE to restart</p>
