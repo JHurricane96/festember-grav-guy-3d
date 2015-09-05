@@ -20,6 +20,7 @@ function Game () {
 	this.env = new Environment();
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
+	this.lightAnim = null;
 	this.player = new Player();
 	this.coins = [];
 	this.enemies = [];
@@ -63,7 +64,9 @@ Game.prototype.reInitialize = function () {
 	this.player = new Player();
 	this.coins = [];
 	this.enemies = [];
+	clearInterval(this.lightAnim);
 	this.light.color.setHex(0xFFFFFF);
+	this.lightAnim = null;
 	this.timeToSpeedUp = 0;
 	this.powers = {
 		keyPressed: {
@@ -78,6 +81,7 @@ Game.prototype.reInitialize = function () {
 		}
 	}
 	this.powers.elt.timeSlowFuel.style.width = "100%";
+	this.powers.elt.timeSlow.className = this.powers.elt.timeSlow.className.replace(" active", "");
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
 			this.scene.add(this.env[wall]);
@@ -151,6 +155,33 @@ Game.prototype.playerCoinCollideCheck = function (coin) {
 	return false;
 }
 
+Game.prototype.changeLights = function () {
+	var lightCol = "";
+	for (var i = 0; i < 3; ++i) {
+		lightCol += Math.ceil(Math.random() * (parseInt("0xFF", 16) - parseInt("0x60", 16)) + parseInt("0x60", 16)).toString(16);
+	}
+	lightCol = new THREE.Color(parseInt(lightCol, 16));
+	var startLightCol = this.light.color;
+	if (this.lightAnim)
+		clearInterval(this.lightAnim);
+	this.lightAnim = animate(
+		50,
+		function (t) {
+			return t;
+		},
+		3000,
+		(function (x) {
+			for (c in this.light.color) {
+				if (this.light.color.hasOwnProperty(c)) {
+					this.light.color[c] = startLightCol[c] + x * (lightCol[c] - startLightCol[c]);
+				}
+			}
+			console.log(x);
+		}).bind(this),
+		(function(){return;}).bind(this)
+	);
+}
+
 Game.prototype.update = function (timeDiff) {
 	var enemy, coins;
 	var toDelete = [];
@@ -170,9 +201,10 @@ Game.prototype.update = function (timeDiff) {
 			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
 		}
 	}
-	if(this.timeToSpeedUp > config.speedUpAfter && this.timeFactor > config.maxTimeFactor) {
+	if (this.timeToSpeedUp > config.speedUpAfter && this.timeFactor > config.maxTimeFactor) {
 		this.timeFactor--;
 		this.timeToSpeedUp = 0;
+		this.changeLights();
 		if (this.curEnemyTypes < config.enemyTypesNo)
 			this.curEnemyTypes += 2;
 	}
@@ -184,7 +216,7 @@ Game.prototype.update = function (timeDiff) {
 	if (this.enemyGenDist <= 0) {
 		this.enemyGenDist = 0;
 		var enemyType = Math.random() * this.curEnemyTypes;
-		// var enemyType = 7;
+		// var enemyType = 11;
 		if (enemyType < 4) {
 			coins = generateCoins(enemyType, config.coin.number);
 			coins.forEach(function (coin) {

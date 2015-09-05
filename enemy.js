@@ -1,7 +1,7 @@
-function Enemy (position, size, zVel, type) {
+function Enemy (position, size, zVel, type, color) {
 	this.size = size;
 	var cubeGeo = new THREE.BoxGeometry(this.size.x, this.size.y, this.size.z);
-	var material = new THREE.MeshPhongMaterial({"color": 0x00FFFF, "transparent": true});
+	var material = new THREE.MeshPhongMaterial({"color": color, "transparent": true});
 	material.opacity = 0.6;
 	this.en = new THREE.Mesh(cubeGeo, material);
 	this.en.position.copy(position);
@@ -57,6 +57,7 @@ function generateOneEnemy (enemyType) {
 	var enemy;
 	var enemyX = 0, enemyY = 0;
 	var enemyTypeString;
+	var enemyColor = 0x00FFFF;
 	var enemySize = {
 		"z": 200
 	}
@@ -105,6 +106,7 @@ function generateOneEnemy (enemyType) {
 		enemySize.x = config.roomWidth / 2;
 		enemySize.y = config.roomHeight;
 		enemyTypeString = "normalMoveHrz";
+		enemyColor = 0x00F040;
 	}
 	//Moving vertically
 	else if (enemyType < 8) {
@@ -112,6 +114,7 @@ function generateOneEnemy (enemyType) {
 		enemySize.y = config.roomHeight / 2;
 		// enemyY = (Math.random() * config.roomHeight - enemySize.y) - config.roomHeight/2 + enemySize.y/2;
 		enemyTypeString = "normalMoveVer";
+		enemyColor = 0x00F040;
 	}
 	enemy = new Enemy(
 		new THREE.Vector3(
@@ -121,7 +124,8 @@ function generateOneEnemy (enemyType) {
 		),
 		enemySize,
 		config.zVel,
-		enemyTypeString
+		enemyTypeString,
+		enemyColor
 	);
 	return enemy;
 }
@@ -158,7 +162,8 @@ function generateTwoEnemies (enemyType) {
 			),
 			enemySize,
 			config.zVel,
-			enemyTypeString
+			enemyTypeString,
+			0xFFFFFF
 		),
 		new Enemy (
 			new THREE.Vector3 (
@@ -168,7 +173,8 @@ function generateTwoEnemies (enemyType) {
 			),
 			enemySize,
 			config.zVel,
-			enemyTypeString
+			enemyTypeString,
+			0xFF0000
 		)
 	);
 	return enemies;

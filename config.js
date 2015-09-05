@@ -9,7 +9,7 @@ var config = {
 		"omega": 0.1,
 		"distBetween": 280,
 		"number": 7,
-		"scoreMult": 200,
+		"scoreMult": 10,
 	},
 	"accelMag": 4,
 	"playerSize": 50,
@@ -33,6 +33,6 @@ var config = {
 	},
 	"startTimeFactor": 20,
 	"timeSlowFactor": 10,
-	"scoreFactor": 3000,
+	"scoreFactor": 1000,
 	"maxTimeFactor": 10
 };
