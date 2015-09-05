@@ -176,7 +176,6 @@ Game.prototype.changeLights = function () {
 					this.light.color[c] = startLightCol[c] + x * (lightCol[c] - startLightCol[c]);
 				}
 			}
-			console.log(x);
 		}).bind(this),
 		(function(){return;}).bind(this)
 	);
@@ -201,9 +200,10 @@ Game.prototype.update = function (timeDiff) {
 			this.powers.elt.timeSlowFuel.style.width = this.powers.fuel.timeSlow + "%";
 		}
 	}
-	if (this.timeToSpeedUp > config.speedUpAfter && this.timeFactor > config.maxTimeFactor) {
-		this.timeFactor--;
+	if (this.timeToSpeedUp > config.speedUpAfter) {
 		this.timeToSpeedUp = 0;
+		if (this.timeFactor > config.maxTimeFactor)
+			this.timeFactor--;
 		this.changeLights();
 		if (this.curEnemyTypes < config.enemyTypesNo)
 			this.curEnemyTypes += 2;
@@ -305,6 +305,8 @@ Game.prototype.update = function (timeDiff) {
 	this.camera.position.y /= ((config.roomHeight - this.player.size) / (config.roomHeight - this.player.size*3));
 	this.score += config.zVel * t;
 	this.scoreCard.innerHTML = Math.floor(this.score / config.scoreFactor);
+	this.camera.rotation.z = (config.roomHeight/2 - this.player.size/2 + this.player.pl.position.y) / (config.roomHeight - this.player.size) * Math.PI;
+	console.log(this.camera.rotation.z);
 }
 
 Game.prototype.startEvents = function () {
@@ -387,27 +389,44 @@ function main () {
 }
 
 function onKeyDown (event) {
+	//S key
 	if (event.keyCode == 83) {
 		game.powers.keyPressed.timeSlow = true;
 	}
+	//Left arrow key
 	else if (event.keyCode == 37) {
 		event.preventDefault();
-		game.gravity.x = -config.accelMag;
+		if (game.gravity.y < 0)
+			game.gravity.x = -config.accelMag;
+		else
+			game.gravity.x = config.accelMag;
 		game.gravChange = true;
 	}
+	//Up arrow key
 	else if (event.keyCode == 38) {
 		event.preventDefault();
-		game.gravity.y = config.accelMag;
+		if (game.gravity.y < 0)
+			game.gravity.y = config.accelMag;
+		else
+			game.gravity.y = -config.accelMag;
 		game.gravChange = true;
 	}
+	//Right arrow key
 	else if (event.keyCode == 39) {
 		event.preventDefault();
-		game.gravity.x = config.accelMag;
+		if (game.gravity.y < 0)
+			game.gravity.x = config.accelMag;
+		else
+			game.gravity.x = -config.accelMag
 		game.gravChange = true;
 	}
+	//Down arrow key
 	else if (event.keyCode == 40) {
 		event.preventDefault();
-		game.gravity.y = -config.accelMag;
+		if (game.gravity.y < 0)
+			game.gravity.y = -config.accelMag;
+		else
+			game.gravity.y = config.accelMag
 		game.gravChange = true;
 	}
 }
