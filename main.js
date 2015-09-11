@@ -51,7 +51,7 @@ function Game () {
 	this.sounds.thud.volume = 0.15;
 	this.sounds.coin.volume = 0.25;
 	this.sounds.time.volume = 0.25;
-	this.sounds.grav.volume = 1;
+	this.sounds.grav.volume = 0.25;
 	this.sounds.grav.playbackRate = 3.5;
 	this.sounds.time.playbackRate = 4;
 	this.sounds.music.loop = true;
