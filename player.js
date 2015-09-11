@@ -10,34 +10,64 @@ function Player () {
 	this.velocity = new THREE.Vector3(0, 0, 0);
 }
 
-Player.prototype.checkCollide = function (gravity, gravChange) {
+Player.prototype.checkCollide = function (gravity, gravChange, t) {
 	var plPos = this.pl.position;
+	var collision = false;
 	if (plPos.y - this.size / 2 <= -config.roomHeight / 2) {
 		this.pl.position.y = (-config.roomHeight / 2) + this.size / 2;
 		if (!gravChange) {
-			//if (gravity.y < 0)
+			if (Math.abs(this.velocity.y) - 0.1 < Math.abs(gravity.y * t)) {
+				this.velocity.y = 0;
+			}
+			else {
 				this.velocity.y = -this.velocity.y * 0.2;
-			/*else
-				this.velocity.y = 0;*/
+				collision = true;
+			}
 		}
+		else
+			this.velocity.y = -0;
 	}
 	if (plPos.y + this.size / 2 >= config.roomHeight / 2) {
 		this.pl.position.y = config.roomHeight / 2 - this.size / 2;
 		if (!gravChange) {
-			//if (gravity.y > 0)
+			if (Math.abs(this.velocity.y) - 0.1 < Math.abs(gravity.y * t)) {
+				this.velocity.y = 0;
+			}
+			else {
 				this.velocity.y = -this.velocity.y * 0.2;
-			/*else
-				this.velocity.y = 0;*/
+				collision = true;
+			}
 		}
+		else
+			this.velocity.y = -0;
 	}
 	if (plPos.x + this.size / 2 >= config.roomWidth / 2) {
 		this.pl.position.x = config.roomWidth / 2 - this.size / 2;
-		if (!gravChange)
-			this.velocity.x = -this.velocity.x * 0.2;
+		if (!gravChange) {
+			if (Math.abs(this.velocity.x) - 0.1 < Math.abs(gravity.x * t)) {
+				this.velocity.x = 0;
+			}
+			else {
+				this.velocity.x = -this.velocity.x * 0.2;
+				collision = true;
+			}
+		}
+		else
+			this.velocity.x = -0;
 	}
 	if (plPos.x - this.size / 2 <= -config.roomWidth / 2) {
 		this.pl.position.x = -config.roomWidth / 2 + this.size / 2;
-		if (!gravChange)
-			this.velocity.x = -this.velocity.x * 0.2;
+		if (!gravChange) {
+			if (Math.abs(this.velocity.x) - 0.1 < Math.abs(gravity.x * t)) {
+				this.velocity.x = 0;
+			}
+			else {
+				this.velocity.x = -this.velocity.x * 0.2;
+				collision = true;
+			}
+		}
+		else
+			this.velocity.x = -0;
 	}
+	return collision;
 }

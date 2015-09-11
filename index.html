@@ -175,6 +175,9 @@
 				transform: translate(0%, -300%);
 				text-align: center;
 			}
+			audio {
+				display: none;
+			}
 		</style>
 		<script src="three.min.js"></script>
 		<script src="animate.js"></script>
@@ -184,7 +187,7 @@
 		<script src="enemy.js"></script>
 	</head>
 	<body>
-		<script>
+		<!--script>
 			window.fbAsyncInit = function() {
 			    FB.init({
 			      appId      : '526383454175723',
@@ -200,7 +203,7 @@
 			     js.src = "//connect.facebook.net/en_US/sdk.js";
 			     fjs.parentNode.insertBefore(js, fjs);
 			   }(document, 'script', 'facebook-jssdk'));
-		</script>
+		</script-->
 		<div id="con">
 			<div class="status-icon" id="time-icon">
 				<img src="time.png">
@@ -237,6 +240,8 @@
 			  data-show-faces="false">
 			</div>	
 		</div>
+		<audio id="sound-thud" src="thud.wav" preload="auto">
+		</audio>
 		<script src="main.js"></script>
 	</body>
 </html>

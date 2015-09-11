@@ -37,6 +37,25 @@ function Game () {
 			"timeSlowFuel": document.querySelector("#time-icon .fuel-indicator")
 		}
 	}
+	this.sounds = {
+		"thud": new Audio("thud.mp3"),
+		"coin": new Audio("coin.mp3"),
+		"time": new Audio("time.mp3"),
+		"grav": new Audio("grav.mp3"),
+		"music": new Audio("back.mp3")
+	};
+	this.sounds.thud.load();
+	this.sounds.coin.load();
+	this.sounds.time.load();
+	this.sounds.music.load();
+	this.sounds.thud.volume = 0.15;
+	this.sounds.coin.volume = 0.25;
+	this.sounds.time.volume = 0.25;
+	this.sounds.grav.volume = 1;
+	this.sounds.grav.playbackRate = 3.5;
+	this.sounds.time.playbackRate = 4;
+	this.sounds.music.loop = true;
+	this.sounds.music.play();
 	this.scene.add(this.light);
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
@@ -82,6 +101,9 @@ Game.prototype.reInitialize = function () {
 	}
 	this.powers.elt.timeSlowFuel.style.width = "100%";
 	this.powers.elt.timeSlow.className = this.powers.elt.timeSlow.className.replace(" active", "");
+	this.sounds.music.playbackRate = 1;
+	this.sounds.music.currentTime = 0;
+	this.sounds.music.play();
 	for (var wall in this.env) {
 		if (this.env.hasOwnProperty(wall))
 			this.scene.add(this.env[wall]);
@@ -265,6 +287,9 @@ Game.prototype.update = function (timeDiff) {
 	for (i = 0; i < this.coins.length; ++i) {
 		coin = this.coins[i];
 		if (this.playerCoinCollideCheck(coin)) {
+			console.log(prevTime, "cling!");
+			this.sounds.coin.currentTime = 0;
+			this.sounds.coin.play();
 			toDelete.push(i);
 			this.score += config.zVel * t * config.coin.scoreMult;
 		}
@@ -278,7 +303,6 @@ Game.prototype.update = function (timeDiff) {
 		this.coins.splice(i, 1);
 	}
 	this.enemyGenDist -= this.zVel * t;
-	this.gravChange = false;
 	if (this.env["leftWall" + this.curWallSet].position.z - config.cameraLos >= config.roomDepth / 2) {
 		this.env.wrapWalls(this.curWallSet);
 		this.curWallSet = (this.curWallSet + 1) % 2;
@@ -299,26 +323,31 @@ Game.prototype.update = function (timeDiff) {
 		tempVector.multiplyScalar(t);
 		this.player.pl.position.add(tempVector);
 	}
-	this.player.checkCollide(this.gravity, this.gravChange);
+	if (this.powers.keyPressed.timeSlow && this.powers.fuel.timeSlow > 0) {
+		if (this.player.checkCollide(this.gravity, this.gravChange, t * config.timeSlowFactor))
+			this.sounds.thud.play();
+	}
+	else if (this.player.checkCollide(this.gravity, this.gravChange, t)) {
+		this.sounds.thud.currentTime = 0;
+		this.sounds.thud.play();
+	}
+	this.gravChange = false;
 	this.camera.position.copy(this.player.pl.position);
 	this.camera.position.z += config.cameraPos;
 	this.camera.position.y /= ((config.roomHeight - this.player.size) / (config.roomHeight - this.player.size*3));
 	this.score += config.zVel * t;
 	this.scoreCard.innerHTML = Math.floor(this.score / config.scoreFactor);
 	this.camera.rotation.z = (config.roomHeight/2 - this.player.size/2 + this.player.pl.position.y) / (config.roomHeight - this.player.size) * Math.PI;
-	console.log(this.camera.rotation.z);
 }
 
 Game.prototype.startEvents = function () {
 	window.addEventListener("keydown", onKeyDown);
 	window.addEventListener("keyup", onKeyUp);
-	window.addEventListener("resize", windowResize);
 }
 
 Game.prototype.stopEvents = function () {
 	window.removeEventListener("keydown", onKeyDown);
 	window.removeEventListener("keyup", onKeyUp);
-	// window.removeEventListener("resize", windowResize);
 }
 
 Game.prototype.cleanup = function () {
@@ -344,6 +373,7 @@ function startGame (event) {
 	if (event.keyCode == 32) {
 		window.removeEventListener("keydown", startGame);
 		window.addEventListener("keydown", pauseToggle);
+		game.startEvents();
 		startMenu.style.display = "none";
 		requestAnimationFrame(mainLoop);
 	}
@@ -381,7 +411,7 @@ function mainLoop (curTime) {
 
 function main () {
 	windowResize();
-	game.startEvents();
+	window.addEventListener("resize", windowResize);
 	game.renderer.render(game.scene, game.camera);
 	startMenu.style.display = "block";
 	prevTime = undefined;
@@ -391,10 +421,20 @@ function main () {
 function onKeyDown (event) {
 	//S key
 	if (event.keyCode == 83) {
+		if (!game.powers.keyPressed.timeSlow) {
+			game.sounds.time.currentTime = 0;
+			game.sounds.time.play();
+		}
 		game.powers.keyPressed.timeSlow = true;
+		game.sounds.music.pause();
+		game.sounds.grav.playbackRate = 1;
+	}
+	if (event.keyCode > 36 && event.keyCode < 41) {
+		game.sounds.grav.currentTime = 0;
+		game.sounds.grav.play();
 	}
 	//Left arrow key
-	else if (event.keyCode == 37) {
+	if (event.keyCode == 37) {
 		event.preventDefault();
 		if (game.gravity.y < 0)
 			game.gravity.x = -config.accelMag;
@@ -433,6 +473,9 @@ function onKeyDown (event) {
 
 function onKeyUp (event) {
 	if (event.keyCode == 83) {
+		// game.sounds.music.playbackRate = 1;
+		game.sounds.music.play();
+		game.sounds.grav.playbackRate = 3.5;
 		game.powers.keyPressed.timeSlow = false;
 		game.powers.elt.timeSlow.className = game.powers.elt.timeSlow.className.replace(" active", "");
 	}
@@ -444,10 +487,13 @@ function pauseToggle (event) {
 			game.paused = false;
 			pauseMenu.style.display = "none";
 			game.startEvents();
+			game.sounds.music.play();
 		}
 		else {
 			game.stopEvents();
+			onKeyUp({"keyCode": 83});
 			pauseMenu.style.display = "block";
+			game.sounds.music.pause();
 			game.paused = true;
 		}
 	}
