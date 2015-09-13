@@ -8,174 +8,7 @@
 		<meta property="og:title" content="Grav Guy" />
 		<meta property="og:description" content="Play to win exciting goodies!" />
 		<meta property="og:image" content="https://festember.com/~arunr/screenshot.png" />
-		<style>
-			html, body {
-				width: 100%;
-				height: 100%;
-				padding: 0;
-				margin: 0;
-			}
-			#con {
-				position: relative;
-				width: 100%;
-				height: 100%;
-				position: absolute;
-			}
-			canvas {
-				display: block;
-			}
-			#score {
-				position: absolute;
-				z-index: 1;
-				top: 1%;
-				left: 100%;
-				transform: translateX(-120%);
-				border-radius: 3px;
-				padding: 20px;
-				white-space: nowrap;
-				background-color: rgba(60, 60, 60, 0.5);
-				color: #CCCCCC;
-				font-size: 2em;
-				font-family: sans-serif;
-				text-align: center;
-			}
-			.status-icon {
-				position: absolute;
-				z-index: 1;
-				width: 70px;
-				height: 70px;
-				margin-left: 20px;
-				text-align: center;
-				-webkit-filter	: opacity(0.2);
-				-moz-filter	: opacity(0.2);
-				-ms-filter	: opacity(0.2);
-				-o-filter 	: opacity(0.2);
-				filter		: opacity(0.2);
-			}
-			.status-icon.active {
-				-webkit-filter	: opacity(1);
-				-moz-filter	: opacity(1);
-				-ms-filter	: opacity(1);
-				-o-filter 	: opacity(1);
-				filter		: opacity(1);
-			}
-			.status-icon img {
-				height: 80%;
-			}
-			.fuel-indicator {
-				position: absolute;
-				width: 100%;
-				height: 10%;
-				background-color: black;
-			}
-			#time-icon {
-				margin-top: 10px;
-			}
-			p {
-				margin: 0;
-			}
-			.menu {
-				border-radius: 3px;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				width: 80%;
-				height: 50%;
-				transform: translate(-50%, -50%);
-				background-color: rgba(60, 60, 60, 0.3);
-				display: none;
-				text-align: center;
-			}
-			#start {
-				height: auto;
-				padding: 40px;
-				color: #CCCCCC;
-				font-family: Calibri, sans-serif;
-				font-weight: 100;
-			}
-			#pause {
-				display: none;
-				position: absolute;
-				width: 100%;
-				height: 100%;
-				background-color: black;
-				color: white;
-			}
-			#start h1 {
-				font-size: 3em;
-				font-weight: 100;
-			}
-			#start ul {
-				padding: 0;
-				list-style: none;
-				font-size: 1.8em;
-			}
-			#start p.flash {
-				font-size: 3em;
-			}
-			#pause p {
-				margin: 0;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%,-50%);
-				font-size: 4em;
-			}
-			.menu p {
-				font-weight: 100;
-				font-family: Calibri, sans-serif;
-				text-align: center;
-				color: #DDDDDD;
-				font-size: 2em;
-			}
-			p.flash {				
-				animation-duration: 0.9s;
-				animation-name: flash;
-				animation-iteration-count: infinite;
-				animation-direction: alternate;
-			}
-			.menu.center p {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				font-size: 3em;
-				transform: translate(-50%, -50%);
-			}
-			button {
-				position: relative;
-				top: 71%;
-				padding: 10px;
-				background-color: transparent;
-				border-radius: 1px;
-				font-size: 1.2em;
-				border: 1px solid black;
-				color: white;
-				transition: 0.15s all;
-			}
-			button:hover {
-				cursor: pointer;
-				background-color: rgba(40, 40, 40, 0.5);
-				color: #CCCCCC;
-				border-color: white;
-			}
-			button:active {
-				outline: none;
-			}
-			@keyframes flash {
-				from {
-					opacity: 0;
-				}
-				to {
-					opacity: 1;
-				}
-			}
-			.fb-like {
-				position: relative;
-				top: 100%;
-				transform: translate(0%, -300%);
-				text-align: center;
-			}
-		</style>
+		<link rel="stylesheet" href="style.css">
 		<script src="./javascripts/three.min.js"></script>
 		<script src="./javascripts/animate.js"></script>
 		<script src="./javascripts/config.js"></script>
@@ -203,7 +36,7 @@
 		</script-->
 		<div id="con">
 			<div class="status-icon" id="time-icon">
-				<img src="time.png">
+				<img src="./images/time.png">
 				<div class="fuel-indicator"></div>
 			</div>
 			<div id="score">
@@ -211,18 +44,31 @@
 			</div>
 		</div>
 		<div id="start" class="menu">
-			<h1>Welcome !</h1>
-			<ul>
-				<li>Left and right arrow keys - Movement</li>
-				<li>Up arrow key - Change gravity</li>
-				<li>
-					Press and hold S - Slow time.<br />
-					Watch your fuel! (Top left)
-				</li>
-				<li>Esc - Pause</li>
-				<li>Avoid the blue obstacles.</li>
-				<li>Collect the coins.</li>
-			</ul>
+			<h1>Welcome</h1>
+			<table>
+				<tr>
+					<th colspan="2" class="em">Goal - Avoid the obstacles !</th>
+				</tr>
+				<tr>
+					<td><img src="./images/left.png" /><img src="./images/right.png" /></td><td>Movement</td>
+				</tr>
+				<tr>
+					<td><img src="./images/up.png" /></td><td>Change gravity</td>
+				</tr>
+				<tr>
+					<td><img src="./images/S.png" /></td><td>Hold to slow time</td>
+				</tr>
+				<tr>
+					<td><img src="./images/time.png" /></td><td>Fuel indicator at top left</td>
+				</tr>
+				<tr>
+					<td><img src="./images/esc.png" /></td><td>Pause</td>
+				</tr>
+				<tr>
+					<td><img src="./images/coin.png" /></td>
+					<td>Collect the coins</td>
+				</tr>
+			</table>
 			<p class="flash">Press SPACE to start</p>
 		</div>
 		<div id="pause">
@@ -237,6 +83,7 @@
 			  data-show-faces="false">
 			</div>	
 		</div>
+		<!--script src="./javascripts/game.js"></script-->
 		<script src="./javascripts/main.js"></script>
 	</body>
 </html>

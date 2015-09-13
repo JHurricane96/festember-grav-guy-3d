@@ -2,7 +2,7 @@ function Player () {
 	this.size = config.playerSize;
 	var cubeGeo = new THREE.BoxGeometry(this.size, this.size, this.size);
 	var material = new THREE.MeshPhongMaterial({"color": 0x404040, "transparent": true});
-	material.opacity = 0.8;
+	material.opacity = 0.85;
 	this.pl = new THREE.Mesh(cubeGeo, material);
 	this.pl.position.set(0, 0, -120);
 /*	this.box = new THREE.BoxHelper(this.pl);
@@ -16,7 +16,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 	if (plPos.y - this.size / 2 <= -config.roomHeight / 2) {
 		this.pl.position.y = (-config.roomHeight / 2) + this.size / 2;
 		if (!gravChange) {
-			if (Math.abs(this.velocity.y) - 0.1 < Math.abs(gravity.y * t)) {
+			if (Math.abs(this.velocity.y) - 0.05 < Math.abs(gravity.y * t)) {
 				this.velocity.y = 0;
 			}
 			else {
@@ -30,7 +30,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 	if (plPos.y + this.size / 2 >= config.roomHeight / 2) {
 		this.pl.position.y = config.roomHeight / 2 - this.size / 2;
 		if (!gravChange) {
-			if (Math.abs(this.velocity.y) - 0.1 < Math.abs(gravity.y * t)) {
+			if (Math.abs(this.velocity.y) - 0.05 < Math.abs(gravity.y * t)) {
 				this.velocity.y = 0;
 			}
 			else {
@@ -44,7 +44,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 	if (plPos.x + this.size / 2 >= config.roomWidth / 2) {
 		this.pl.position.x = config.roomWidth / 2 - this.size / 2;
 		if (!gravChange) {
-			if (Math.abs(this.velocity.x) - 0.1 < Math.abs(gravity.x * t)) {
+			if (Math.abs(this.velocity.x) - 0.05 < Math.abs(gravity.x * t)) {
 				this.velocity.x = 0;
 			}
 			else {
@@ -58,7 +58,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 	if (plPos.x - this.size / 2 <= -config.roomWidth / 2) {
 		this.pl.position.x = -config.roomWidth / 2 + this.size / 2;
 		if (!gravChange) {
-			if (Math.abs(this.velocity.x) - 0.1 < Math.abs(gravity.x * t)) {
+			if (Math.abs(this.velocity.x) - 0.05 < Math.abs(gravity.x * t)) {
 				this.velocity.x = 0;
 			}
 			else {

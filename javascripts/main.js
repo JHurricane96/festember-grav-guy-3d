@@ -17,6 +17,7 @@ function Game () {
 		config.cameraLos + 1000
 	);
 	this.camera.position.set(0, 0, 0);
+	this.camera.rotation.z = Math.PI / 2;
 	this.env = new Environment();
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
 	this.light.position.set(0, 0, -60);
@@ -42,18 +43,22 @@ function Game () {
 		"coin": new Audio("./audio/coin.mp3"),
 		"time": new Audio("./audio/time.mp3"),
 		"grav": new Audio("./audio/grav.mp3"),
+		"end": new Audio("./audio/boom.mp3"),
 		"music": new Audio("./audio/back.mp3")
 	};
-	this.sounds.thud.load();
-	this.sounds.coin.load();
-	this.sounds.time.load();
-	this.sounds.music.load();
+	for (sound in this.sounds) {
+		if (this.sounds.hasOwnProperty(sound)) {
+			this.sounds[sound].load();
+		}
+	}
 	this.sounds.thud.volume = 0.15;
 	this.sounds.coin.volume = 0.25;
-	this.sounds.time.volume = 0.25;
+	this.sounds.time.volume = 0.4;
 	this.sounds.grav.volume = 0.25;
+	this.sounds.end.volume = 0.4;
 	this.sounds.grav.playbackRate = 3.5;
 	this.sounds.time.playbackRate = 4;
+	this.sounds.end.playbackRate = 2;
 	this.sounds.music.loop = true;
 	this.sounds.music.play();
 	this.scene.add(this.light);
@@ -81,6 +86,8 @@ function Game () {
 Game.prototype.reInitialize = function () {
 	this.env = new Environment();
 	this.player = new Player();
+	this.camera.rotation.set(0, 0, Math.PI / 2);
+	this.camera.position.set(0, 0, 0);
 	this.coins = [];
 	this.enemies = [];
 	clearInterval(this.lightAnim);
@@ -101,6 +108,7 @@ Game.prototype.reInitialize = function () {
 	}
 	this.powers.elt.timeSlowFuel.style.width = "100%";
 	this.powers.elt.timeSlow.className = this.powers.elt.timeSlow.className.replace(" active", "");
+	this.sounds.grav.playbackRate = 3.5;
 	this.sounds.music.playbackRate = 1;
 	this.sounds.music.currentTime = 0;
 	this.sounds.music.play();
@@ -232,6 +240,8 @@ Game.prototype.update = function (timeDiff) {
 	}
 	var tempVector = new THREE.Vector3(0, 0, 0);
 	if (this.playerBlockCollideCheck()) {
+		this.sounds.music.pause();
+		this.sounds.end.play();
 		this.light.color.setHex(0xFF0000);
 		return;
 	}
@@ -426,6 +436,7 @@ function onKeyDown (event) {
 		}
 		game.powers.keyPressed.timeSlow = true;
 		game.sounds.music.pause();
+		// game.sounds.music.playbackRate = 0.5;
 		game.sounds.grav.playbackRate = 1;
 	}
 	if (event.keyCode > 36 && event.keyCode < 41) {
