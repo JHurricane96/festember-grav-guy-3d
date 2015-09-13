@@ -1,8 +1,8 @@
 var config = {
 	"roomHeight": 8000,
 	"roomWidth": 8000,
-	"zVel": 130,
-	"enemyLinearVel": 87,
+	"zVel": 160,
+	"enemyLinearVel": 81,
 	"coin": {
 		"radius": 150,
 		"thick": 10,
@@ -15,8 +15,8 @@ var config = {
 	"playerSize": 100,
 	"lightPos": 60,
 	"cameraPos": 240,
-	"los": 15000,
-	"cameraLos": 15000,
+	"los": 20000,
+	"cameraLos": 20000,
 	"roomDepth": 50000,
 /*	"enemy": {
 		"size": {

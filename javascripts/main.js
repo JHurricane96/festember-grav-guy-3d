@@ -255,7 +255,7 @@ Game.prototype.update = function (timeDiff) {
 				this.coins.push(coin);
 				this.scene.add(coin.cn);
 			}, this);
-			this.enemyGenDist += config.coin.number * config.coin.distBetween - config.enemyGenDist / 3;
+			this.enemyGenDist += config.coin.number * config.coin.distBetween - config.enemyGenDist / 6;
 		}
 		else if (enemyType < 12) {
 			enemy = generateOneEnemy(enemyType - 4);
