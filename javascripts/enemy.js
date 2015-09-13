@@ -22,9 +22,9 @@ function Enemy (position, size, zVel, type, color) {
 	}
 	else if (type == "normalMoveVer") {
 		if (Math.random() * 2 < 1)
-			this.velocity.y = config.enemyLinearVel/2;
+			this.velocity.y = config.enemyLinearVel;
 		else
-			this.velocity.y = -config.enemyLinearVel/2;
+			this.velocity.y = -config.enemyLinearVel;
 	}
 	this.type = type;
 }
@@ -136,11 +136,11 @@ function generateTwoEnemies (enemyType) {
 		enemyY = [0, 0];
 	var enemyTypeString = "normal";
 	var enemySize = {
-		"z": 3500
+		"z": 7000
 	}
 	//Two long vertical slabs
 	if (enemyType < 9) {
-		enemySize.x = 400;
+		enemySize.x = 800;
 		enemySize.y = config.roomHeight;
 		enemyX[0] = -config.roomWidth/2 + enemySize.x/2;
 		enemyX[1] = config.roomWidth/2 - enemySize.x/2;
@@ -148,8 +148,8 @@ function generateTwoEnemies (enemyType) {
 	//Two long horizontal slabs
 	else if (enemyType < 10) {
 		enemySize.x = config.roomWidth;
-		enemySize.y = 200;
-		enemySize.z /= 2.5;
+		enemySize.y = 800;
+		enemySize.z /= 2;
 		enemyY[0] = -config.roomHeight/2 + enemySize.y/2;
 		enemyY[1] = config.roomHeight/2 - enemySize.y/2;
 	}

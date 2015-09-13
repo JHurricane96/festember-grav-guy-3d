@@ -1,22 +1,22 @@
 var config = {
-	"roomHeight": 2000,
-	"roomWidth": 4096,
-	"zVel": 80,
-	"enemyLinearVel": 60,
+	"roomHeight": 8000,
+	"roomWidth": 8000,
+	"zVel": 130,
+	"enemyLinearVel": 87,
 	"coin": {
-		"radius": 75,
+		"radius": 150,
 		"thick": 10,
 		"omega": 0.1,
-		"distBetween": 280,
+		"distBetween": 400,
 		"number": 7,
 		"scoreMult": 10,
 	},
-	"accelMag": 4,
-	"playerSize": 50,
+	"accelMag": 10,
+	"playerSize": 100,
 	"lightPos": 60,
-	"cameraPos": 120,
-	"los": 7000,
-	"cameraLos": 7000,
+	"cameraPos": 240,
+	"los": 15000,
+	"cameraLos": 15000,
 	"roomDepth": 50000,
 /*	"enemy": {
 		"size": {
@@ -25,7 +25,7 @@ var config = {
 			"z": 200
 		}
 	},*/
-	"enemyGenDist": 4000,
+	"enemyGenDist": 6000,
 	"enemyTypesNo": 14,
 	"speedUpAfter": 15000,	// 15 seconds
 	"fuelConsumeRate": {

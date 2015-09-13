@@ -16,7 +16,7 @@ function Game () {
 		1,
 		config.cameraLos + 1000
 	);
-	this.camera.position.set(0, 0, 0);
+	this.camera.position.set(0, 0, -config.cameraPos);
 	this.camera.rotation.z = Math.PI / 2;
 	this.env = new Environment();
 	this.light = new THREE.PointLight(0xFFFFFF, 1, config.los);
@@ -87,7 +87,7 @@ Game.prototype.reInitialize = function () {
 	this.env = new Environment();
 	this.player = new Player();
 	this.camera.rotation.set(0, 0, Math.PI / 2);
-	this.camera.position.set(0, 0, 0);
+	this.camera.position.set(0, 0, -config.cameraPos);
 	this.coins = [];
 	this.enemies = [];
 	clearInterval(this.lightAnim);
@@ -248,7 +248,7 @@ Game.prototype.update = function (timeDiff) {
 	if (this.enemyGenDist <= 0) {
 		this.enemyGenDist = 0;
 		var enemyType = Math.random() * this.curEnemyTypes;
-		// var enemyType = 11;
+		// var enemyType = 12;
 		if (enemyType < 4) {
 			coins = generateCoins(enemyType, config.coin.number);
 			coins.forEach(function (coin) {

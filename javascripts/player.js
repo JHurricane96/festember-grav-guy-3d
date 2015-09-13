@@ -20,7 +20,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 				this.velocity.y = 0;
 			}
 			else {
-				this.velocity.y = -this.velocity.y * 0.2;
+				this.velocity.y = -this.velocity.y * 0.15;
 				collision = true;
 			}
 		}
@@ -34,7 +34,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 				this.velocity.y = 0;
 			}
 			else {
-				this.velocity.y = -this.velocity.y * 0.2;
+				this.velocity.y = -this.velocity.y * 0.15;
 				collision = true;
 			}
 		}
@@ -48,7 +48,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 				this.velocity.x = 0;
 			}
 			else {
-				this.velocity.x = -this.velocity.x * 0.2;
+				this.velocity.x = -this.velocity.x * 0.15;
 				collision = true;
 			}
 		}
@@ -62,7 +62,7 @@ Player.prototype.checkCollide = function (gravity, gravChange, t) {
 				this.velocity.x = 0;
 			}
 			else {
-				this.velocity.x = -this.velocity.x * 0.2;
+				this.velocity.x = -this.velocity.x * 0.15;
 				collision = true;
 			}
 		}
