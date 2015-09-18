@@ -1,5 +1,7 @@
 var express = require('express');
+var db_connect = require('../db_connect');
 var router = express.Router();
+var config = require('../config');
 
 function decode(buffer) {
 	var env = [];
@@ -57,12 +59,26 @@ function toArrayBuffer(buffer) {
 
 router.post('/', function(req, res, next) {
 	try {
+		var ip = req.connection.remoteAddress;
+		if(config.is_proxied)
+			ip = req.headers['x-forwarded-for'];
+
 		var buffer = Buffer.concat(req.rawBody);
 		var arrbuffer = toArrayBuffer(buffer);
 
 		var decoded = decode(arrbuffer);
-		console.log(decoded);
-		console.log(buffer.length);
+		
+		db_connect.reuse().then(function(db) {
+			db.collection('analytics').insertOne({
+				id: ip,
+				data: decoded
+			});
+		}).catch(function(err) {
+			console.log(err);
+		});
+
+		//console.log(decoded);
+		//console.log(buffer.length);
 		res.end();
 	}
 	catch(err) {

@@ -111,7 +111,7 @@ var GG3DAnalytics = (function() {
 		return buffer;
 	}
 
-	function send(score, id) {
+	function send(score) {
 		finalScore = score;
 		encode();
 
