@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta property="fb:app_id" content="526383454175723" />
+		<meta property="og:url" content="https://www.festember.com/~arunr" />
+		<meta property="og:type" content="game" />
+		<meta property="og:title" content="Grav Guy" />
+		<meta property="og:description" content="Play to win exciting goodies!" />
+		<meta property="og:image" content="https://festember.com/~arunr/screenshot.png" />
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<script>
+			window.fbAsyncInit = function() {
+			    FB.init({
+			      appId      : '526383454175723',
+			      xfbml      : true,
+			      version    : 'v2.4'
+			    });
+			  };
+
+			  (function(d, s, id){
+			     var js, fjs = d.getElementsByTagName(s)[0];
+			     if (d.getElementById(id)) {return;}
+			     js = d.createElement(s); js.id = id;
+			     js.src = "//connect.facebook.net/en_US/sdk.js";
+			     fjs.parentNode.insertBefore(js, fjs);
+			   }(document, 'script', 'facebook-jssdk'));
+		</script>
+		<div id="con">
+			<div class="status-icon" id="time-icon">
+				<img src="./images/time.png">
+				<div class="fuel-indicator"></div>
+			</div>
+			<div id="score">
+				Hi !
+			</div>
+		</div>
+		<div id="start" class="menu">
+			<h1>Welcome</h1>
+			<table>
+				<tr>
+					<th colspan="2" class="em">Goal - Avoid the obstacles !</th>
+				</tr>
+				<tr>
+					<td><img src="./images/left.png" /><img src="./images/right.png" /></td><td>Movement</td>
+				</tr>
+				<tr>
+					<td><img src="./images/up.png" /></td><td>Change gravity</td>
+				</tr>
+				<tr>
+					<td><img src="./images/S.png" /></td><td>Hold to slow time</td>
+				</tr>
+				<tr>
+					<td><img src="./images/time.png" /></td><td>Fuel indicator at top left</td>
+				</tr>
+				<tr>
+					<td><img src="./images/esc.png" /></td><td>Pause</td>
+				</tr>
+				<tr>
+					<td><img src="./images/coin.png" /></td>
+					<td>Collect the coins</td>
+				</tr>
+			</table>
+			<p class="flash">Press SPACE to start</p>
+		</div>
+		<div id="pause">
+			<p class="flash">PAUSED</p>
+		</div>
+		<div id="restart" class="menu center">
+			<p class="flash">You died. Press SPACE to restart</p>
+			<div
+			  class="fb-like"
+			  data-share="true"
+			  data-colorscheme="dark"
+			  data-show-faces="false">
+			</div>	
+		</div>
+		<script src="./javascripts/game.js"></script>
+	</body>
+</html>
